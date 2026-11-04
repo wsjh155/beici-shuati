@@ -43,6 +43,7 @@ Page({
         finalTotal: 0,
         finalCorrect: 0,
         finalScore: 0,
+        orderMode: 'random',
     },
 
     onLoad(options) {
@@ -72,6 +73,10 @@ Page({
 
     async loadQuestions() {
         this.setData({ loading: true });
+        const settingsRes = await store.getPlanSettings();
+        const st = settingsRes.data || {};
+        const orderMode = st.question_order === 'order' ? 'order' : 'random';
+        const daily = st.daily_questions != null ? st.daily_questions : 20;
         let result;
         if (this.data.idsStr) {
             const ids = String(this.data.idsStr).split(',').map((s) => Number(s)).filter((n) => n > 0);
@@ -90,8 +95,7 @@ Page({
                 })),
             };
         } else if (this.data.mode === 'plan') {
-            const [settings, marks] = await Promise.all([store.getPlanSettings(), store.listQuestionMarks()]);
-            const daily = settings.data && settings.data.daily_questions != null ? settings.data.daily_questions : 20;
+            const marks = await store.listQuestionMarks();
             const startOfDay = new Date();
             startOfDay.setHours(0, 0, 0, 0);
             const todayDone = (marks.data || []).filter((m) => m.updated_at
@@ -99,12 +103,10 @@ Page({
             const remain = daily - todayDone;
             result = remain > 0 ? await store.pickDailyQuestions(remain) : { data: [] };
         } else if (this.data.mode === 'planPool') {
-            const [planRes, marksRes, settingsRes] = await Promise.all([
+            const [planRes, marksRes] = await Promise.all([
                 store.listPlanQuestions(),
                 store.listQuestionMarks(),
-                store.getPlanSettings(),
             ]);
-            const daily = settingsRes.data && settingsRes.data.daily_questions != null ? settingsRes.data.daily_questions : 20;
             const startOfDay = new Date();
             startOfDay.setHours(0, 0, 0, 0);
             const markRows = marksRes.data || [];
@@ -126,9 +128,12 @@ Page({
         if (this.data.authState !== 'signed-in') {
             return;
         }
-        const questions = (result.data || []).map((q) => ({ ...q, options: parseOptions(q) }));
+        // 正序基准（错题优先等筛选顺序），乱序只在展示时打乱
+        this.baseQuestions = (result.data || []).map((q) => ({ ...q, options: parseOptions(q) }));
+        const questions = store.applyOrder(this.baseQuestions, orderMode);
         this.setData({
             loading: false,
+            orderMode,
             questions,
             index: 0,
             current: questions.length > 0 ? questions[0] : null,
@@ -139,6 +144,19 @@ Page({
             correctCount: 0,
             done: false,
         });
+    },
+
+    // 已作答的题（含当前题）保持不动，只重排后面的题
+    toggleOrder() {
+        const next = this.data.orderMode === 'random' ? 'order' : 'random';
+        const base = this.baseQuestions || this.data.questions || [];
+        const head = this.data.questions.slice(0, this.data.index + 1);
+        const headIds = head.map((q) => q.id);
+        const rest = base.filter((q) => headIds.indexOf(q.id) < 0);
+        const list = head.concat(store.applyOrder(rest, next));
+        this.setData({ orderMode: next, questions: list });
+        store.saveOrderMode('question', next);
+        wx.showToast({ title: next === 'random' ? '已切换为乱序' : '已切换为正序', icon: 'none' });
     },
 
     onOptionTap(e) {

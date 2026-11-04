@@ -7,6 +7,8 @@ Page({
         dailyNew: 20,
         dailyReview: 50,
         dailyQuestions: 20,
+        wordOrder: 'random',
+        questionOrder: 'random',
         autoAdjust: true,
         dueCount: 0,
         newCount: 0,
@@ -88,6 +90,8 @@ Page({
             dailyNew,
             dailyReview: s.daily_review != null ? s.daily_review : 50,
             dailyQuestions: s.daily_questions != null ? s.daily_questions : 20,
+            wordOrder: s.word_order === 'order' ? 'order' : 'random',
+            questionOrder: s.question_order === 'order' ? 'order' : 'random',
             autoAdjust,
             dueCount: dueWordsList.length + dueMarksOnly.length,
             newCount: fresh.data ? fresh.data.length : 0,
@@ -111,12 +115,25 @@ Page({
         this.setData({ autoAdjust: e.detail.value });
     },
 
+    // 顺序切换：kind = word | question
+    onOrderTap(e) {
+        const kind = e.currentTarget.dataset.kind;
+        const mode = e.currentTarget.dataset.mode === 'order' ? 'order' : 'random';
+        if (kind === 'question') {
+            this.setData({ questionOrder: mode });
+        } else {
+            this.setData({ wordOrder: mode });
+        }
+    },
+
     async save() {
         this.setData({ saving: true });
         const r = await store.savePlanSettings({
             daily_new: this.data.dailyNew,
             daily_review: this.data.dailyReview,
             daily_questions: this.data.dailyQuestions,
+            word_order: this.data.wordOrder,
+            question_order: this.data.questionOrder,
             auto_adjust: this.data.autoAdjust,
             updated_at: store.nowISO(),
         });

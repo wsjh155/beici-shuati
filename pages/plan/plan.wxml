@@ -39,6 +39,15 @@
             <slider min="10" max="100" step="10" value="{{dailyReview}}" activeColor="#3b6ef5" block-size="24" bindchange="onReviewChange" />
 
             <view class="setting-row">
+                <text class="setting-label">学习顺序</text>
+                <text class="setting-value">{{wordOrder === 'random' ? '乱序' : '正序'}}</text>
+            </view>
+            <view class="seg">
+                <view class="seg-item {{wordOrder === 'random' ? 'seg-active' : ''}}" data-kind="word" data-mode="random" bindtap="onOrderTap">🔀 乱序</view>
+                <view class="seg-item {{wordOrder === 'order' ? 'seg-active' : ''}}" data-kind="word" data-mode="order" bindtap="onOrderTap">🔢 正序</view>
+            </view>
+
+            <view class="setting-row">
                 <view class="setting-text">
                     <text class="setting-label">根据掌握情况自动调整</text>
                     <text class="setting-desc">学习时自动按正确率增减新词量</text>
@@ -54,6 +63,15 @@
                 <text class="setting-value">{{dailyQuestions}} 题</text>
             </view>
             <slider min="5" max="100" step="5" value="{{dailyQuestions}}" activeColor="#3b6ef5" block-size="24" bindchange="onQuestionsChange" />
+
+            <view class="setting-row">
+                <text class="setting-label">刷题顺序</text>
+                <text class="setting-value">{{questionOrder === 'random' ? '乱序' : '正序'}}</text>
+            </view>
+            <view class="seg">
+                <view class="seg-item {{questionOrder === 'random' ? 'seg-active' : ''}}" data-kind="question" data-mode="random" bindtap="onOrderTap">🔀 乱序</view>
+                <view class="seg-item {{questionOrder === 'order' ? 'seg-active' : ''}}" data-kind="question" data-mode="order" bindtap="onOrderTap">🔢 正序</view>
+            </view>
         </view>
 
         <view class="card">

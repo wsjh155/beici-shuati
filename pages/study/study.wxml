@@ -31,7 +31,12 @@
         <view class="progress-bar">
             <view class="progress-fill" style="width: {{(currentIndex / total) * 100}}%"></view>
         </view>
-        <text class="progress-text">{{currentIndex + 1}} / {{total}}</text>
+        <view class="progress-row">
+            <text class="progress-text">{{currentIndex + 1}} / {{total}}</text>
+            <view class="order-pill" bindtap="toggleOrder">
+                <text class="order-pill-text">{{orderMode === 'random' ? '🔀 乱序' : '🔢 正序'}}</text>
+            </view>
+        </view>
 
         <view class="card-scene">
             <view class="card {{flipped ? 'flipped' : ''}}" bindtap="flipCard">

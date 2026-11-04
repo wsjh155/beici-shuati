@@ -14,6 +14,7 @@ Page({
         dailyReview: 50,
         planNew: 0,
         planReview: 0,
+        orderMode: 'random',
         showCreate: false,
         formName: '',
         formDesc: '',
@@ -58,7 +59,23 @@ Page({
             dailyReview,
             planNew: Math.min(d.fresh, dailyNew),
             planReview: Math.min(d.due, dailyReview),
+            orderMode: s.word_order === 'order' ? 'order' : 'random',
         });
+    },
+
+    // 乱序 / 正序切换（立即保存）
+    async onOrderTap(e) {
+        const mode = e.currentTarget.dataset.mode === 'order' ? 'order' : 'random';
+        if (mode === this.data.orderMode) {
+            return;
+        }
+        this.setData({ orderMode: mode });
+        const r = await store.saveOrderMode('word', mode);
+        if (r.error) {
+            wx.showToast({ title: '保存失败', icon: 'none' });
+            return;
+        }
+        wx.showToast({ title: mode === 'random' ? '已设为乱序' : '已设为正序', icon: 'none' });
     },
 
     // 底部「单词」标签点按：直接进入学习

@@ -55,6 +55,20 @@
     color: #8a94a6;
 }
 
+.order-pill {
+    margin-right: 12rpx;
+    padding: 6rpx 18rpx;
+    border-radius: 20rpx;
+    background: #eef2fb;
+}
+
+.order-pill-text {
+    font-size: 22rpx;
+    font-weight: 600;
+    color: #3b6ef5;
+    line-height: 1;
+}
+
 .type-tag {
     padding: 6rpx 20rpx;
     font-size: 22rpx;

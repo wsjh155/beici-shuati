@@ -9,6 +9,7 @@ Page({
         todayDone: 0,
         planTotal: 0,
         planDone: 0,
+        orderMode: 'random',
         showCreate: false,
         formName: '',
         formDesc: '',
@@ -54,7 +55,23 @@ Page({
             todayDone,
             planTotal: s.total,
             planDone: s.done,
+            orderMode: settings.data && settings.data.question_order === 'order' ? 'order' : 'random',
         });
+    },
+
+    // 乱序 / 正序切换（立即保存）
+    async onOrderTap(e) {
+        const mode = e.currentTarget.dataset.mode === 'order' ? 'order' : 'random';
+        if (mode === this.data.orderMode) {
+            return;
+        }
+        this.setData({ orderMode: mode });
+        const r = await store.saveOrderMode('question', mode);
+        if (r.error) {
+            wx.showToast({ title: '保存失败', icon: 'none' });
+            return;
+        }
+        wx.showToast({ title: mode === 'random' ? '已设为乱序' : '已设为正序', icon: 'none' });
     },
 
     // 底部「刷题」标签点按：直接进入刷题

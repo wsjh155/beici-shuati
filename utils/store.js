@@ -899,6 +899,37 @@ async function resetWordToPlan(word) {
     return { data: { marks: a.data || [], words: b.data || [] }, error: null };
 }
 
+// ==================== 学习顺序（乱序 / 正序） ====================
+// mode: 'random' 乱序 | 'order' 正序。返回新数组，不改原列表。
+function applyOrder(list, mode) {
+    const arr = (list || []).slice();
+    if (mode !== 'random' || arr.length < 2) {
+        return arr;
+    }
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
+    return arr;
+}
+
+// 读取顺序设置：kind = 'word' | 'question'
+async function getOrderMode(kind) {
+    const r = await getPlanSettings();
+    const s = r.data || {};
+    const value = kind === 'question' ? s.question_order : s.word_order;
+    return value === 'order' ? 'order' : 'random';
+}
+
+function saveOrderMode(kind, mode) {
+    const value = mode === 'order' ? 'order' : 'random';
+    const patch = kind === 'question' ? { question_order: value } : { word_order: value };
+    patch.updated_at = nowISO();
+    return savePlanSettings(patch);
+}
+
 // ==================== 背词计划设置 ====================
 function getPlanSettings() {
     return safe(() => db().from('plan_settings').select('*').limit(1).maybeSingle());
@@ -1018,6 +1049,10 @@ module.exports = {
     // 计划设置
     getPlanSettings,
     savePlanSettings,
+    // 学习顺序（乱序 / 正序）
+    applyOrder,
+    getOrderMode,
+    saveOrderMode,
     // 复习记录
     addReviewLog,
     recentReviewStats,

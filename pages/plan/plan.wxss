@@ -103,6 +103,30 @@
     color: #3b6ef5;
 }
 
+.seg {
+    display: flex;
+    margin-top: 4rpx;
+    padding: 6rpx;
+    border-radius: 16rpx;
+    background: #f4f6fb;
+}
+
+.seg-item {
+    flex: 1;
+    padding: 14rpx 0;
+    font-size: 26rpx;
+    text-align: center;
+    color: #5b6472;
+    border-radius: 12rpx;
+}
+
+.seg-active {
+    font-weight: 600;
+    color: #3b6ef5;
+    background: #ffffff;
+    box-shadow: 0 2rpx 8rpx rgba(59, 110, 245, 0.15);
+}
+
 .adjust-tip {
     display: block;
     margin-top: 20rpx;

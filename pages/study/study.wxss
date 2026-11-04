@@ -51,11 +51,33 @@
     transition: width 0.3s ease;
 }
 
-.progress-text {
+.progress-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-top: 16rpx;
+}
+
+.progress-text {
     font-size: 24rpx;
     color: #8a94a6;
-    text-align: center;
+}
+
+.order-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20rpx;
+    height: 48rpx;
+    border-radius: 24rpx;
+    background: #eef2fb;
+}
+
+.order-pill-text {
+    font-size: 22rpx;
+    font-weight: 600;
+    color: #3b6ef5;
+    line-height: 1;
 }
 
 .card-scene {

@@ -16,6 +16,7 @@ Page({
         total: 0,
         done: false,
         learnedCount: 0,
+        orderMode: 'random',
     },
 
     onLoad(options) {
@@ -56,6 +57,11 @@ Page({
 
     async loadWords() {
         this.setData({ loading: true });
+        const settingsRes = await store.getPlanSettings();
+        const st = settingsRes.data || {};
+        const orderMode = st.word_order === 'order' ? 'order' : 'random';
+        const dailyNew = st.daily_new != null ? st.daily_new : 20;
+        const dailyReview = st.daily_review != null ? st.daily_review : 50;
         let list = [];
         if (this.data.mode === 'review') {
             const r = await store.listDueWords();
@@ -71,17 +77,13 @@ Page({
                 list = list.filter((w) => w.word === this.data.singleWord);
             }
         } else if (this.data.mode === 'plan') {
-            list = await this.buildPlanList();
+            list = await this.buildPlanList(dailyNew, dailyReview);
         } else if (this.data.mode === 'planPool') {
             // 总计划池：仅学总计划里的单词，按每日配额
-            const [planRes, marksRes, settingsRes] = await Promise.all([
+            const [planRes, marksRes] = await Promise.all([
                 store.listPlanWordInfos(),
                 store.listAllMarks(),
-                store.getPlanSettings(),
             ]);
-            const st = settingsRes.data || {};
-            const dailyNew = st.daily_new != null ? st.daily_new : 20;
-            const dailyReview = st.daily_review != null ? st.daily_review : 50;
             const nowTs = Date.now();
             const markMap = {};
             (marksRes.data || []).forEach((m) => { markMap[m.word] = m; });
@@ -115,24 +117,63 @@ Page({
         if (this.data.authState !== 'signed-in') {
             return;
         }
+        // 正序基准（接口返回顺序），乱序只在展示时打乱
+        this.baseList = list;
+        this.consumedItems = [];
+        const ordered = store.applyOrder(list, orderMode);
         this.setData({
             loading: false,
-            wordList: list,
-            total: list.length,
+            orderMode,
+            wordList: ordered,
+            total: ordered.length,
             currentIndex: 0,
-            current: list.length > 0 ? list[0] : null,
+            current: ordered.length > 0 ? ordered[0] : null,
             flipped: false,
             done: false,
             learnedCount: 0,
         });
     },
 
+    // 单词唯一键（用于切换顺序时判断哪些已学）
+    wordKey(item) {
+        if (!item) {
+            return '';
+        }
+        return (item.id || '') + '|' + (item.word || '');
+    },
+
+    // 学习页顶部「乱序 / 正序」切换：保留已学，只重排剩余卡片
+    toggleOrder() {
+        const next = this.data.orderMode === 'random' ? 'order' : 'random';
+        const base = this.baseList || this.data.wordList || [];
+        const consumed = this.consumedItems || [];
+        const consumedKeys = consumed.map((x) => this.wordKey(x));
+        const rest = base.filter((x) => consumedKeys.indexOf(this.wordKey(x)) < 0);
+        const ordered = store.applyOrder(rest, next);
+        const list = consumed.concat(ordered);
+        const idx = consumed.length;
+        this.setData({
+            orderMode: next,
+            wordList: list,
+            total: list.length,
+            currentIndex: idx,
+            current: list[idx] || null,
+            flipped: false,
+        });
+        store.saveOrderMode('word', next);
+        wx.showToast({ title: next === 'random' ? '已切换为乱序' : '已切换为正序', icon: 'none' });
+    },
+
     // 按背词计划取今日学习集：复习上限 dailyReview + 新词上限 dailyNew
-    async buildPlanList() {
-        const settingsRes = await store.getPlanSettings();
-        const s = settingsRes.data || {};
-        const dailyNew = s.daily_new != null ? s.daily_new : 20;
-        const dailyReview = s.daily_review != null ? s.daily_review : 50;
+    async buildPlanList(presetNew, presetReview) {
+        let dailyNew = presetNew;
+        let dailyReview = presetReview;
+        if (dailyNew == null || dailyReview == null) {
+            const settingsRes = await store.getPlanSettings();
+            const s = settingsRes.data || {};
+            dailyNew = s.daily_new != null ? s.daily_new : 20;
+            dailyReview = s.daily_review != null ? s.daily_review : 50;
+        }
         const now = Date.now();
 
         // 单词本维度：只取该单词本里的「到期」和「新词」，并按计划配额截断
@@ -212,6 +253,10 @@ Page({
         if (!cur) {
             return;
         }
+        if (!this.consumedItems) {
+            this.consumedItems = [];
+        }
+        this.consumedItems.push(cur);
         const source = cur.source || (this.data.mode === 'library' ? 'mark' : 'word');
         if (source === 'mark') {
             // 云端词库/标记：记录跨子词库标记

@@ -28,6 +28,17 @@
             <button class="start-btn" bindtap="goStart">▶ 开始学习</button>
         </view>
 
+        <view class="order-card">
+            <view class="order-head">
+                <text class="order-title">学习顺序</text>
+                <text class="order-desc">{{orderMode === 'random' ? '每次学习随机打乱，避免死记位置' : '按词库原有顺序依次学习'}}</text>
+            </view>
+            <view class="seg">
+                <view class="seg-item {{orderMode === 'random' ? 'seg-active' : ''}}" data-mode="random" bindtap="onOrderTap">🔀 乱序</view>
+                <view class="seg-item {{orderMode === 'order' ? 'seg-active' : ''}}" data-mode="order" bindtap="onOrderTap">🔢 正序</view>
+            </view>
+        </view>
+
         <view class="stat-card">
             <view class="stat-cell">
                 <text class="stat-num">{{total}}</text>

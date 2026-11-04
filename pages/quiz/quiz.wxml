@@ -22,6 +22,17 @@
             <button class="qp-btn" bindtap="goStart">开始刷题</button>
         </view>
 
+        <view class="order-card">
+            <view class="order-head">
+                <text class="order-title">刷题顺序</text>
+                <text class="order-desc">{{orderMode === 'random' ? '每次刷题随机打乱，避免背答案位置' : '按题库原有顺序依次练习'}}</text>
+            </view>
+            <view class="seg">
+                <view class="seg-item {{orderMode === 'random' ? 'seg-active' : ''}}" data-mode="random" bindtap="onOrderTap">🔀 乱序</view>
+                <view class="seg-item {{orderMode === 'order' ? 'seg-active' : ''}}" data-mode="order" bindtap="onOrderTap">🔢 正序</view>
+            </view>
+        </view>
+
         <view class="stat-card">
             <view class="stat-cell">
                 <text class="stat-num">{{planTotal}}</text>
