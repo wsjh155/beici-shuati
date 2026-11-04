@@ -111,8 +111,10 @@ Page({
             const remain = daily - todayDone;
             result = remain > 0 ? await store.pickDailyQuestions(remain) : { data: [] };
         } else if (this.data.mode === 'planPool') {
+            // 只刷所选科目（题库）：在数据库层就过滤，避免取出上千题
+            const picked = prefs.getSelectedBanks();
             const [planRes, marksRes] = await Promise.all([
-                store.listPlanQuestions(),
+                store.listPlanQuestions(picked),
                 store.listQuestionMarks(),
             ]);
             const startOfDay = new Date();

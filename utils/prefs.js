@@ -2,6 +2,7 @@
 // 词库 / 题库顺序：每个词库、题库可单独设置「乱序 / 顺序」，未设置时跟随全局计划
 const LIB_ORDER_KEY = 'lib_order_map';
 const BANK_ORDER_KEY = 'bank_order_map';
+const BANK_FILTER_KEY = 'bank_filter_ids';
 
 function readMap(key) {
     try {
@@ -58,4 +59,24 @@ module.exports = {
     setLibraryOrder,
     getBankOrder,
     setBankOrder,
+    getSelectedBanks,
+    setSelectedBanks,
 };
+
+// 刷题科目筛选：返回选中的题库 id 数组；空数组表示不限（全部科目）
+function getSelectedBanks() {
+    try {
+        const v = wx.getStorageSync(BANK_FILTER_KEY);
+        if (!Array.isArray(v)) {
+            return [];
+        }
+        return v.map((x) => Number(x)).filter((x) => x > 0);
+    } catch (e) {
+        return [];
+    }
+}
+
+function setSelectedBanks(ids) {
+    const list = (ids || []).map((x) => Number(x)).filter((x) => x > 0);
+    writeMap(BANK_FILTER_KEY, list);
+}

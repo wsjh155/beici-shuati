@@ -67,6 +67,95 @@
     border-radius: 32rpx;
 }
 
+.subject-card {
+    margin-top: 24rpx;
+    padding: 28rpx 32rpx;
+    border-radius: 24rpx;
+    background: #ffffff;
+    box-shadow: 0 4rpx 16rpx rgba(31, 35, 41, 0.04);
+}
+
+.subject-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.subject-title {
+    font-size: 28rpx;
+    font-weight: 600;
+    color: #1f2329;
+}
+
+.subject-all {
+    font-size: 24rpx;
+    color: #3b6ef5;
+}
+
+.subject-list {
+    margin-top: 12rpx;
+}
+
+.subject-row {
+    display: flex;
+    align-items: center;
+    padding: 18rpx 0;
+    border-bottom: 2rpx solid #f0f1f2;
+}
+
+.subject-row:last-child {
+    border-bottom: none;
+}
+
+.check {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40rpx;
+    height: 40rpx;
+    border: 2rpx solid #d3d9e6;
+    border-radius: 50%;
+    background: #ffffff;
+}
+
+.check-on {
+    border-color: #3b6ef5;
+    background: #3b6ef5;
+}
+
+.check-mark {
+    font-size: 24rpx;
+    line-height: 1;
+    color: #ffffff;
+}
+
+.subject-name {
+    flex: 1;
+    margin-left: 16rpx;
+    font-size: 26rpx;
+    color: #1f2329;
+}
+
+.subject-count {
+    font-size: 22rpx;
+    color: #8a94a6;
+}
+
+.subject-empty {
+    display: block;
+    padding: 20rpx 0;
+    font-size: 24rpx;
+    color: #b6bcc8;
+}
+
+.subject-tip {
+    display: block;
+    margin-top: 12rpx;
+    font-size: 21rpx;
+    color: #b6bcc8;
+}
+
 .order-card {
     margin-top: 24rpx;
     padding: 28rpx 32rpx;

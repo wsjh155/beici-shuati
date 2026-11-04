@@ -22,6 +22,24 @@
             <button class="qp-btn" bindtap="goStart">开始刷题</button>
         </view>
 
+        <view class="subject-card">
+            <view class="subject-head">
+                <text class="subject-title">刷题科目</text>
+                <text class="subject-all" catchtap="selectAllBanks">全选</text>
+            </view>
+            <view class="subject-list">
+                <view class="subject-row" wx:for="{{banks}}" wx:key="id" data-id="{{item.id}}" bindtap="toggleBank">
+                    <view class="check {{item.selected ? 'check-on' : ''}}">
+                        <text wx:if="{{item.selected}}" class="check-mark">✓</text>
+                    </view>
+                    <text class="subject-name">{{item.name}}</text>
+                    <text class="subject-count">{{item.count}} 题</text>
+                </view>
+                <text wx:if="{{banks.length === 0}}" class="subject-empty">暂无题库，先到「添加题库」新建或订阅</text>
+            </view>
+            <text class="subject-tip">只刷勾选的科目，今日刷题会从这些科目里出题</text>
+        </view>
+
         <view class="order-card">
             <view class="order-head">
                 <text class="order-title">刷题顺序</text>

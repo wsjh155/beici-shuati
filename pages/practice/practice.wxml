@@ -15,8 +15,8 @@
 
     <view wx:elif="{{questions.length === 0}}" class="state-box">
         <text class="empty-emoji">📭</text>
-        <text class="empty-text">{{mode === 'planPool' ? '总计划里还没有题目' : (mode === 'plan' ? '今日刷题计划已完成' : ((idsStr || mode === 'redo') ? '没有可重做的题目' : '这个题库还没有题目'))}}</text>
-        <text class="empty-sub">{{mode === 'planPool' ? '去「题库总览」勾选题目加入总计划' : (mode === 'plan' ? '可在「背词计划」调整每日题量' : ((idsStr || mode === 'redo') ? '先去刷题吧' : '可前往「导入内容」添加题目'))}}</text>
+        <text class="empty-text">{{mode === 'planPool' ? '所选科目暂无题目' : (mode === 'plan' ? '今日刷题计划已完成' : ((idsStr || mode === 'redo') ? '没有可重做的题目' : '这个题库还没有题目'))}}</text>
+        <text class="empty-sub">{{mode === 'planPool' ? '回「刷题」页勾选其它科目，或把题目加入总计划' : (mode === 'plan' ? '可在「背词计划」调整每日题量' : ((idsStr || mode === 'redo') ? '先去刷题吧' : '可前往「导入内容」添加题目'))}}</text>
         <button class="back-btn" bindtap="goBack">返回</button>
     </view>
 

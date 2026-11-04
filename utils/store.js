@@ -144,11 +144,17 @@ async function batchCreateQuestions(bankId, list) {
 function removeQuestion(id) {
     return safe(() => db().from('questions').delete().eq('id', id).select('*'));
 }
-function getQuestionsByIds(ids) {
+function getQuestionsByIds(ids, bankIds) {
     if (!ids || ids.length === 0) {
         return Promise.resolve({ data: [], error: null });
     }
-    return safe(() => db().from('questions').select('*').in('id', ids));
+    return safe(() => {
+        let query = db().from('questions').select('*').in('id', ids);
+        if (bankIds && bankIds.length) {
+            query = query.in('bank_id', bankIds);
+        }
+        return query;
+    });
 }
 
 // ==================== 练习记录 ====================
@@ -460,7 +466,7 @@ async function planQuestionStats() {
     return { data: { total: ids.size, done }, error: null };
 }
 // 总计划里的题目
-async function listPlanQuestions() {
+async function listPlanQuestions(bankIds) {
     const items = await listPlanItems('question');
     if (items.error) {
         return items;
@@ -469,11 +475,12 @@ async function listPlanQuestions() {
     if (ids.length === 0) {
         return { data: [], error: null };
     }
+    const picked = bankIds && bankIds.length ? bankIds : null;
     const out = [];
     const CHUNK = 400;
     for (let i = 0; i < ids.length; i += CHUNK) {
         const chunk = ids.slice(i, i + CHUNK);
-        const r = await getQuestionsByIds(chunk);
+        const r = await getQuestionsByIds(chunk, picked);
         if (r.error) {
             return { data: null, error: r.error };
         }

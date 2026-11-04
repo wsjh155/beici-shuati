@@ -1,5 +1,6 @@
 const { ensureSession } = require('../../utils/auth');
 const store = require('../../utils/store');
+const prefs = require('../../utils/prefs');
 
 Page({
     data: {
@@ -10,6 +11,7 @@ Page({
         planTotal: 0,
         planDone: 0,
         orderMode: 'random',
+        banks: [],
         showCreate: false,
         formName: '',
         formDesc: '',
@@ -35,10 +37,11 @@ Page({
 
     async load() {
         this.setData({ loading: true });
-        const [settings, stats, marks] = await Promise.all([
+        const [settings, stats, marks, banksRes] = await Promise.all([
             store.getPlanSettings(),
             store.planQuestionStats(),
             store.listQuestionMarks(),
+            store.listBanks(),
         ]);
         if (this.data.authState !== 'signed-in') {
             return;
@@ -49,6 +52,16 @@ Page({
         startOfDay.setHours(0, 0, 0, 0);
         const todayDone = (marks.data || []).filter((m) => m.updated_at
             && new Date(m.updated_at).getTime() >= startOfDay.getTime()).length;
+        // 刷题科目（题库）列表 + 已选筛选
+        const bankRows = banksRes.data || [];
+        const counts = await Promise.all(bankRows.map((b) => store.countQuestions(b.id)));
+        const picked = prefs.getSelectedBanks();
+        const banks = bankRows.map((b, i) => ({
+            id: b.id,
+            name: b.name,
+            count: counts[i] && counts[i].count != null ? counts[i].count : 0,
+            selected: picked.length === 0 ? true : picked.indexOf(b.id) >= 0,
+        }));
         this.setData({
             loading: false,
             dailyQuestions,
@@ -56,7 +69,30 @@ Page({
             planTotal: s.total,
             planDone: s.done,
             orderMode: settings.data && settings.data.question_order === 'order' ? 'order' : 'random',
+            banks,
         });
+    },
+
+    // ===== 刷题科目筛选 =====
+    toggleBank(e) {
+        const id = Number(e.currentTarget.dataset.id);
+        const banks = this.data.banks.map((b) => (b.id === id ? { ...b, selected: !b.selected } : b));
+        if (banks.filter((b) => b.selected).length === 0) {
+            wx.showToast({ title: '至少选择一个科目', icon: 'none' });
+            return;
+        }
+        this.saveBankFilter(banks);
+    },
+
+    selectAllBanks() {
+        this.saveBankFilter(this.data.banks.map((b) => ({ ...b, selected: true })));
+    },
+
+    saveBankFilter(banks) {
+        const ids = banks.filter((b) => b.selected).map((b) => b.id);
+        // 全选时存空数组，表示“不限科目”
+        prefs.setSelectedBanks(ids.length === banks.length ? [] : ids);
+        this.setData({ banks });
     },
 
     // 乱序 / 顺序切换（立即保存）
