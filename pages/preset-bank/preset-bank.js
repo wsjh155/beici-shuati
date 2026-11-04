@@ -5,7 +5,9 @@ Page({
     data: {
         authState: 'checking',
         loading: false,
-        groups: [],
+        myBanks: [],
+        totalQuestions: 0,
+        presetGroups: [],
         subscribingId: 0,
     },
 
@@ -28,12 +30,25 @@ Page({
 
     async load() {
         this.setData({ loading: true });
-        const [presets, myBanks] = await Promise.all([store.listPresetQuestionBanks(), store.listBanks()]);
+        const [myBanksRes, presets] = await Promise.all([
+            store.listBanks(),
+            store.listPresetQuestionBanks(),
+        ]);
         if (this.data.authState !== 'signed-in') {
             return;
         }
+        const banks = myBanksRes.data || [];
+        const counts = await Promise.all(banks.map((b) => store.countQuestions(b.id)));
+        const myBanks = banks.map((b, i) => ({
+            id: b.id,
+            name: b.name,
+            description: b.description || '',
+            count: counts[i] && counts[i].count != null ? counts[i].count : 0,
+        }));
+        const totalQuestions = myBanks.reduce((s, b) => s + b.count, 0);
+        // 预设题库（可能为空）
         const presetList = presets.data || [];
-        const subscribedIds = new Set((myBanks.data || []).map((b) => b.preset_bank_id).filter((id) => id != null));
+        const subscribedIds = new Set(banks.map((b) => b.preset_bank_id).filter((id) => id != null));
         const groupsMap = {};
         presetList.forEach((b) => {
             const cat = b.category || '其他';
@@ -42,8 +57,14 @@ Page({
             }
             groupsMap[cat].push({ ...b, subscribed: subscribedIds.has(b.id) });
         });
-        const groups = Object.keys(groupsMap).map((cat) => ({ category: cat, banks: groupsMap[cat] }));
-        this.setData({ loading: false, groups });
+        const presetGroups = Object.keys(groupsMap).map((cat) => ({ category: cat, banks: groupsMap[cat] }));
+        this.setData({ loading: false, myBanks, totalQuestions, presetGroups });
+    },
+
+    // 直接进入某个题库刷题
+    goPractice(e) {
+        const id = e.currentTarget.dataset.id;
+        wx.navigateTo({ url: '/pages/practice/practice?bankId=' + id });
     },
 
     onSubscribe(e) {

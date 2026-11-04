@@ -92,6 +92,30 @@
     color: #b6bcc8;
 }
 
+.bank-arrow {
+    flex-shrink: 0;
+    margin-left: 16rpx;
+    font-size: 40rpx;
+    color: #c0c6cf;
+}
+
+.empty-sub {
+    margin-top: 12rpx;
+    font-size: 24rpx;
+    color: #b6bcc8;
+}
+
+.preset-empty {
+    display: block;
+    margin-top: 32rpx;
+    padding: 24rpx;
+    font-size: 23rpx;
+    line-height: 1.7;
+    color: #8a94a6;
+    background: #f7f9fd;
+    border-radius: 16rpx;
+}
+
 .btn-subscribe {
     flex-shrink: 0;
     margin-left: 20rpx;

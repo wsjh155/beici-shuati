@@ -10,16 +10,28 @@
 
     <view wx:else class="content">
         <view class="header">
-            <text class="title">预设题库</text>
-            <text class="subtitle">一键订阅，加入你的题库开始刷题</text>
+            <text class="title">我的题库</text>
+            <text class="subtitle">共 {{myBanks.length}} 个题库、{{totalQuestions}} 道题，点题库名直接开始刷题</text>
         </view>
 
-        <view wx:if="{{groups.length === 0 && !loading}}" class="empty">
+        <view wx:if="{{myBanks.length === 0 && !loading}}" class="empty">
             <text class="empty-emoji">📭</text>
-            <text class="empty-text">暂无预设题库</text>
+            <text class="empty-text">还没有题库</text>
+            <text class="empty-sub">可在「刷题 → 新建题库」创建，或下方订阅预设题库</text>
         </view>
 
-        <view class="group" wx:for="{{groups}}" wx:key="category" wx:for-item="g">
+        <view class="group" wx:if="{{myBanks.length > 0}}">
+            <view class="bank-item" wx:for="{{myBanks}}" wx:key="id" data-id="{{item.id}}" bindtap="goPractice">
+                <view class="bank-info">
+                    <text class="bank-name">{{item.name}}</text>
+                    <text class="bank-desc" wx:if="{{item.description}}">{{item.description}}</text>
+                    <text class="bank-count">{{item.count}} 题</text>
+                </view>
+                <text class="bank-arrow">›</text>
+            </view>
+        </view>
+
+        <view class="group" wx:for="{{presetGroups}}" wx:key="category" wx:for-item="g">
             <text class="group-title">{{g.category}}</text>
             <view class="bank-item" wx:for="{{g.banks}}" wx:key="id" wx:for-item="bank">
                 <view class="bank-info">
@@ -31,5 +43,7 @@
                 <button wx:else class="btn-subscribe" data-id="{{bank.id}}" loading="{{subscribingId === bank.id}}" bindtap="onSubscribe">订阅</button>
             </view>
         </view>
+
+        <text wx:if="{{presetGroups.length === 0}}" class="preset-empty">预设题库已清空：所有题目都在上面的「我的题库」里，不需要再订阅</text>
     </view>
 </view>
