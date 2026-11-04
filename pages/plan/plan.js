@@ -1,5 +1,6 @@
 const { ensureSession } = require('../../utils/auth');
 const store = require('../../utils/store');
+const prefs = require('../../utils/prefs');
 
 Page({
     data: {
@@ -17,6 +18,10 @@ Page({
         recentAccuracy: 0,
         adjustTip: '',
         saving: false,
+        libGroups: [],
+        banks: [],
+        showLibOrder: false,
+        showBankOrder: false,
     },
 
     onShow() {
@@ -37,7 +42,7 @@ Page({
     },
 
     async load() {
-        const [settings, due, fresh, totalWords, mastered, recent, marks] = await Promise.all([
+        const [settings, due, fresh, totalWords, mastered, recent, marks, seriesRes, libsRes, banksRes] = await Promise.all([
             store.getPlanSettings(),
             store.listDueWords(),
             store.listNewWords(),
@@ -45,6 +50,9 @@ Page({
             store.countMasteredWords(),
             store.recentReviewStats(7),
             store.listMarksWithWords(),
+            store.listWordSeries(),
+            store.listWordLibraries(),
+            store.listBanks(),
         ]);
         if (this.data.authState !== 'signed-in') {
             return;
@@ -86,12 +94,33 @@ Page({
         } else {
             adjustTip = '学习记录还不足，先按当前计划学习';
         }
+        const wordOrder = s.word_order === 'order' ? 'order' : 'random';
+        const questionOrder = s.question_order === 'order' ? 'order' : 'random';
+        const libGroups = (seriesRes.data || []).map((sr) => ({
+            id: sr.id,
+            name: sr.name,
+            libraries: (libsRes.data || [])
+                .filter((l) => l.series_id === sr.id)
+                .map((l) => ({
+                    id: l.id,
+                    name: l.kind === 'full' ? '完整词库' : '高频词库',
+                    wordCount: l.word_count || 0,
+                    order: prefs.getLibraryOrder(l.id, wordOrder),
+                })),
+        })).filter((g) => g.libraries.length > 0);
+        const banks = (banksRes.data || []).map((b) => ({
+            id: b.id,
+            name: b.name,
+            order: prefs.getBankOrder(b.id, questionOrder),
+        }));
         this.setData({
             dailyNew,
             dailyReview: s.daily_review != null ? s.daily_review : 50,
             dailyQuestions: s.daily_questions != null ? s.daily_questions : 20,
-            wordOrder: s.word_order === 'order' ? 'order' : 'random',
-            questionOrder: s.question_order === 'order' ? 'order' : 'random',
+            wordOrder,
+            questionOrder,
+            libGroups,
+            banks,
             autoAdjust,
             dueCount: dueWordsList.length + dueMarksOnly.length,
             newCount: fresh.data ? fresh.data.length : 0,
@@ -115,7 +144,7 @@ Page({
         this.setData({ autoAdjust: e.detail.value });
     },
 
-    // 顺序切换：kind = word | question（立即保存，无需点保存按钮）
+    // 顺序切换：kind = word | question（全局默认，立即保存）
     async onOrderTap(e) {
         const kind = e.currentTarget.dataset.kind === 'question' ? 'question' : 'word';
         const mode = e.currentTarget.dataset.mode === 'order' ? 'order' : 'random';
@@ -124,9 +153,19 @@ Page({
             return;
         }
         if (kind === 'question') {
-            this.setData({ questionOrder: mode });
+            // 未单独设置过的题库跟着全局一起变
+            this.setData({
+                questionOrder: mode,
+                banks: this.data.banks.map((b) => (b.order === current ? { ...b, order: mode } : b)),
+            });
         } else {
-            this.setData({ wordOrder: mode });
+            this.setData({
+                wordOrder: mode,
+                libGroups: this.data.libGroups.map((g) => ({
+                    ...g,
+                    libraries: g.libraries.map((l) => (l.order === current ? { ...l, order: mode } : l)),
+                })),
+            });
         }
         const r = await store.saveOrderMode(kind, mode);
         if (r.error) {
@@ -134,6 +173,50 @@ Page({
             return;
         }
         wx.showToast({ title: mode === 'random' ? '已设为乱序' : '已设为顺序', icon: 'none' });
+    },
+
+    // ===== 词库 / 题库 单独顺序 =====
+    toggleLibPanel() {
+        this.setData({ showLibOrder: !this.data.showLibOrder });
+    },
+    toggleBankPanel() {
+        this.setData({ showBankOrder: !this.data.showBankOrder });
+    },
+
+    onLibOrderTap(e) {
+        const id = Number(e.currentTarget.dataset.id);
+        const mode = e.currentTarget.dataset.order === 'order' ? 'order' : 'random';
+        prefs.setLibraryOrder(id, mode);
+        const libGroups = this.data.libGroups.map((g) => ({
+            ...g,
+            libraries: g.libraries.map((l) => (l.id === id ? { ...l, order: mode } : l)),
+        }));
+        this.setData({ libGroups });
+        wx.showToast({ title: mode === 'random' ? '已设为乱序' : '已设为顺序', icon: 'none' });
+    },
+
+    onBankOrderTap(e) {
+        const id = Number(e.currentTarget.dataset.id);
+        const mode = e.currentTarget.dataset.order === 'order' ? 'order' : 'random';
+        prefs.setBankOrder(id, mode);
+        this.setData({
+            banks: this.data.banks.map((b) => (b.id === id ? { ...b, order: mode } : b)),
+        });
+        wx.showToast({ title: mode === 'random' ? '已设为乱序' : '已设为顺序', icon: 'none' });
+    },
+
+    // 点词库名 → 按该词库的顺序直接背诵
+    goLibStudy(e) {
+        const id = e.currentTarget.dataset.id;
+        const order = e.currentTarget.dataset.order || 'random';
+        wx.navigateTo({ url: '/pages/study/study?mode=library&libraryId=' + id + '&order=' + order });
+    },
+
+    // 点题库名 → 按该题库的顺序直接刷题
+    goBankPractice(e) {
+        const id = e.currentTarget.dataset.id;
+        const order = e.currentTarget.dataset.order || 'random';
+        wx.navigateTo({ url: '/pages/practice/practice?bankId=' + id + '&order=' + order });
     },
 
     async save() {

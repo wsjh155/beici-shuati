@@ -75,25 +75,6 @@
     margin-top: 16rpx;
 }
 
-.lib-order {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 12rpx;
-    height: 52rpx;
-    padding: 0 18rpx;
-    border-radius: 26rpx;
-    background: #eef2fb;
-}
-
-.lib-order-text {
-    font-size: 22rpx;
-    font-weight: 600;
-    line-height: 1;
-    color: #3b6ef5;
-}
-
 .lib-subscribe {
     flex-shrink: 0;
     margin-left: 16rpx;

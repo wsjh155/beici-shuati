@@ -75,6 +75,54 @@
         </view>
 
         <view class="card">
+            <view class="panel-head" bindtap="toggleLibPanel">
+                <view class="panel-text">
+                    <text class="card-title">词库顺序</text>
+                    <text class="panel-desc">每个词库单独选乱序 / 顺序，点词库名按该顺序开始背诵</text>
+                </view>
+                <text class="chevron">{{showLibOrder ? '收起' : '展开'}}</text>
+            </view>
+            <view wx:if="{{showLibOrder}}" class="panel-body">
+                <view class="lib-group" wx:for="{{libGroups}}" wx:key="id" wx:for-item="g">
+                    <text class="lib-group-title">{{g.name}}</text>
+                    <view class="order-row" wx:for="{{g.libraries}}" wx:key="id" wx:for-item="lib">
+                        <view class="order-name" data-id="{{lib.id}}" data-order="{{lib.order}}" bindtap="goLibStudy">
+                            <text class="order-main">{{lib.name}}</text>
+                            <text class="order-sub">{{lib.wordCount}} 词</text>
+                        </view>
+                        <view class="seg seg-mini">
+                            <view class="seg-item {{lib.order === 'random' ? 'seg-active' : ''}}" data-id="{{lib.id}}" data-order="random" catchtap="onLibOrderTap">乱序</view>
+                            <view class="seg-item {{lib.order === 'order' ? 'seg-active' : ''}}" data-id="{{lib.id}}" data-order="order" catchtap="onLibOrderTap">顺序</view>
+                        </view>
+                    </view>
+                </view>
+                <text wx:if="{{libGroups.length === 0}}" class="panel-empty">暂无词库</text>
+            </view>
+        </view>
+
+        <view class="card">
+            <view class="panel-head" bindtap="toggleBankPanel">
+                <view class="panel-text">
+                    <text class="card-title">题库顺序</text>
+                    <text class="panel-desc">每个题库单独选乱序 / 顺序，点题库名按该顺序开始刷题</text>
+                </view>
+                <text class="chevron">{{showBankOrder ? '收起' : '展开'}}</text>
+            </view>
+            <view wx:if="{{showBankOrder}}" class="panel-body">
+                <view class="order-row" wx:for="{{banks}}" wx:key="id" wx:for-item="b">
+                    <view class="order-name" data-id="{{b.id}}" data-order="{{b.order}}" bindtap="goBankPractice">
+                        <text class="order-main">{{b.name}}</text>
+                    </view>
+                    <view class="seg seg-mini">
+                        <view class="seg-item {{b.order === 'random' ? 'seg-active' : ''}}" data-id="{{b.id}}" data-order="random" catchtap="onBankOrderTap">乱序</view>
+                        <view class="seg-item {{b.order === 'order' ? 'seg-active' : ''}}" data-id="{{b.id}}" data-order="order" catchtap="onBankOrderTap">顺序</view>
+                    </view>
+                </view>
+                <text wx:if="{{banks.length === 0}}" class="panel-empty">暂无题库</text>
+            </view>
+        </view>
+
+        <view class="card">
             <text class="card-title">智能建议</text>
             <text class="adjust-tip">{{adjustTip}}</text>
             <text class="adjust-sub">近 7 天复习正确率：{{recentAccuracy}}%</text>

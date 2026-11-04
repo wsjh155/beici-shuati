@@ -1,37 +1,61 @@
 // 本地偏好设置（按设备保存）
-// 词库顺序：每个词库可单独设置「乱序 / 顺序」，未设置时跟随全局背词计划
+// 词库 / 题库顺序：每个词库、题库可单独设置「乱序 / 顺序」，未设置时跟随全局计划
 const LIB_ORDER_KEY = 'lib_order_map';
+const BANK_ORDER_KEY = 'bank_order_map';
 
-function getLibraryOrderMap() {
+function readMap(key) {
     try {
-        const v = wx.getStorageSync(LIB_ORDER_KEY);
+        const v = wx.getStorageSync(key);
         return v && typeof v === 'object' ? v : {};
     } catch (e) {
         return {};
     }
 }
 
-// 返回 'random' 乱序 | 'order' 顺序
-function getLibraryOrder(libraryId, fallback) {
-    const map = getLibraryOrderMap();
-    const v = map[String(libraryId)];
-    if (v === 'order' || v === 'random') {
-        return v;
-    }
-    return fallback === 'order' ? 'order' : 'random';
-}
-
-function setLibraryOrder(libraryId, mode) {
-    const map = getLibraryOrderMap();
-    map[String(libraryId)] = mode === 'order' ? 'order' : 'random';
+function writeMap(key, map) {
     try {
-        wx.setStorageSync(LIB_ORDER_KEY, map);
+        wx.setStorageSync(key, map);
     } catch (e) {
         // 忽略本地存储失败
     }
 }
 
+function normalize(mode) {
+    return mode === 'order' ? 'order' : 'random';
+}
+
+// 返回 'random' 乱序 | 'order' 顺序
+function getLibraryOrder(libraryId, fallback) {
+    const v = readMap(LIB_ORDER_KEY)[String(libraryId)];
+    if (v === 'order' || v === 'random') {
+        return v;
+    }
+    return normalize(fallback);
+}
+
+function setLibraryOrder(libraryId, mode) {
+    const map = readMap(LIB_ORDER_KEY);
+    map[String(libraryId)] = normalize(mode);
+    writeMap(LIB_ORDER_KEY, map);
+}
+
+function getBankOrder(bankId, fallback) {
+    const v = readMap(BANK_ORDER_KEY)[String(bankId)];
+    if (v === 'order' || v === 'random') {
+        return v;
+    }
+    return normalize(fallback);
+}
+
+function setBankOrder(bankId, mode) {
+    const map = readMap(BANK_ORDER_KEY);
+    map[String(bankId)] = normalize(mode);
+    writeMap(BANK_ORDER_KEY, map);
+}
+
 module.exports = {
     getLibraryOrder,
     setLibraryOrder,
+    getBankOrder,
+    setBankOrder,
 };

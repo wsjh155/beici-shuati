@@ -11,7 +11,7 @@
     <view wx:else class="content">
         <view class="header">
             <text class="title">预设词库</text>
-            <text class="subtitle">每个词库可单独选择「乱序 / 顺序」，点词库名直接按该顺序背诵；也可「订阅」加入我的单词本</text>
+            <text class="subtitle">点词库名直接背诵（顺序在「背词计划 → 词库顺序」里改），也可「订阅」加入我的单词本</text>
         </view>
 
         <view wx:if="{{series.length === 0 && !loading}}" class="empty">
@@ -19,16 +19,13 @@
             <text class="empty-text">暂无词库</text>
         </view>
 
-        <view class="series" wx:for="{{series}}" wx:key="id" wx:for-item="s" wx:for-index="si">
+        <view class="series" wx:for="{{series}}" wx:key="id" wx:for-item="s">
             <text class="series-title">{{s.name}}</text>
             <view class="lib-row">
-                <view class="lib-item" wx:for="{{s.libraries}}" wx:key="id" wx:for-item="lib" wx:for-index="li">
+                <view class="lib-item" wx:for="{{s.libraries}}" wx:key="id" wx:for-item="lib">
                     <view class="lib-info" bindtap="goStudy" data-id="{{lib.id}}" data-order="{{lib.order}}">
                         <text class="lib-name">{{lib.kind === 'full' ? '完整词库' : '高频词库'}}</text>
                         <text class="lib-count">{{lib.word_count}} 词</text>
-                    </view>
-                    <view class="lib-order" catchtap="toggleLibOrder" data-id="{{lib.id}}" data-si="{{si}}" data-li="{{li}}">
-                        <text class="lib-order-text">{{lib.order === 'random' ? '🔀 乱序' : '🔢 顺序'}}</text>
                     </view>
                     <button wx:if="{{lib.subscribed}}" class="lib-subscribe subscribed" disabled>已订阅</button>
                     <button wx:else class="lib-subscribe" data-id="{{lib.id}}" loading="{{subscribingId === lib.id}}" catchtap="onSubscribe">订阅</button>

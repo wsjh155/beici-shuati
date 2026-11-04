@@ -1,5 +1,6 @@
 const { ensureSession } = require('../../utils/auth');
 const store = require('../../utils/store');
+const prefs = require('../../utils/prefs');
 
 function parseOptions(q) {
     let options = [];
@@ -44,13 +45,17 @@ Page({
         finalCorrect: 0,
         finalScore: 0,
         orderMode: 'random',
+        orderOverride: '',
+        bankIdForOrder: 0,
     },
 
     onLoad(options) {
+        const orderOverride = options.order === 'order' || options.order === 'random' ? options.order : '';
         this.setData({
             bankId: options.bankId || null,
             idsStr: options.ids || '',
             mode: options.mode || '',
+            orderOverride,
         });
     },
 
@@ -75,7 +80,10 @@ Page({
         this.setData({ loading: true });
         const settingsRes = await store.getPlanSettings();
         const st = settingsRes.data || {};
-        const orderMode = st.question_order === 'order' ? 'order' : 'random';
+        let orderMode = st.question_order === 'order' ? 'order' : 'random';
+        if (this.data.orderOverride) {
+            orderMode = this.data.orderOverride;
+        }
         const daily = st.daily_questions != null ? st.daily_questions : 20;
         let result;
         if (this.data.idsStr) {
@@ -130,10 +138,23 @@ Page({
         }
         // 顺序基准（错题优先等筛选顺序），乱序只在展示时打乱
         this.baseQuestions = (result.data || []).map((q) => ({ ...q, options: parseOptions(q) }));
+        // 题目都来自同一个题库时，用该题库单独设置的顺序
+        const bankIds = [];
+        this.baseQuestions.forEach((q) => {
+            const bid = q.bank_id || this.data.bankId;
+            if (bid && bankIds.indexOf(Number(bid)) < 0) {
+                bankIds.push(Number(bid));
+            }
+        });
+        const singleBank = bankIds.length === 1 ? bankIds[0] : 0;
+        if (!this.data.orderOverride && singleBank) {
+            orderMode = prefs.getBankOrder(singleBank, orderMode);
+        }
         const questions = store.applyOrder(this.baseQuestions, orderMode);
         this.setData({
             loading: false,
             orderMode,
+            bankIdForOrder: singleBank,
             questions,
             index: 0,
             current: questions.length > 0 ? questions[0] : null,
@@ -154,8 +175,13 @@ Page({
         const headIds = head.map((q) => q.id);
         const rest = base.filter((q) => headIds.indexOf(q.id) < 0);
         const list = head.concat(store.applyOrder(rest, next));
-        this.setData({ orderMode: next, questions: list });
-        store.saveOrderMode('question', next);
+        this.setData({ orderMode: next, orderOverride: next, questions: list });
+        // 单题库练习：只改这个题库的顺序；混合/总计划：改全局刷题顺序
+        if (this.data.bankIdForOrder) {
+            prefs.setBankOrder(this.data.bankIdForOrder, next);
+        } else {
+            store.saveOrderMode('question', next);
+        }
         wx.showToast({ title: next === 'random' ? '已切换为乱序' : '已切换为顺序', icon: 'none' });
     },
 

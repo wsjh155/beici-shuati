@@ -57,25 +57,7 @@ Page({
         this.setData({ loading: false, series, globalOrder });
     },
 
-    // 单个词库切换「乱序 / 顺序」（保存在本机，下次进来沿用）
-    toggleLibOrder(e) {
-        const id = e.currentTarget.dataset.id;
-        const si = e.currentTarget.dataset.si;
-        const li = e.currentTarget.dataset.li;
-        const series = this.data.series.slice();
-        const lib = series[si] && series[si].libraries[li];
-        if (!lib) {
-            return;
-        }
-        const next = lib.order === 'order' ? 'random' : 'order';
-        prefs.setLibraryOrder(id, next);
-        const libs = series[si].libraries.slice();
-        libs[li] = { ...lib, order: next };
-        series[si] = { ...series[si], libraries: libs };
-        this.setData({ series });
-        wx.showToast({ title: next === 'random' ? '已设为乱序' : '已设为顺序', icon: 'none' });
-    },
-
+    // 顺序来自「背词计划 → 词库顺序」，这里只负责带着它进入学习
     goStudy(e) {
         const id = e.currentTarget.dataset.id;
         const order = e.currentTarget.dataset.order || 'random';

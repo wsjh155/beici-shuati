@@ -103,6 +103,98 @@
     color: #3b6ef5;
 }
 
+/* 词库 / 题库顺序面板 */
+.panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.panel-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.panel-desc {
+    margin-top: 6rpx;
+    font-size: 22rpx;
+    color: #8a94a6;
+}
+
+.chevron {
+    flex-shrink: 0;
+    margin-left: 16rpx;
+    font-size: 24rpx;
+    color: #3b6ef5;
+}
+
+.panel-body {
+    margin-top: 20rpx;
+}
+
+.panel-empty {
+    display: block;
+    padding: 24rpx 0;
+    font-size: 24rpx;
+    text-align: center;
+    color: #b6bcc8;
+}
+
+.lib-group + .lib-group {
+    margin-top: 16rpx;
+}
+
+.lib-group-title {
+    display: block;
+    margin: 8rpx 0 10rpx;
+    font-size: 24rpx;
+    font-weight: 600;
+    color: #3b6ef5;
+}
+
+.order-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18rpx 0;
+    border-bottom: 2rpx solid #f0f1f2;
+}
+
+.order-row:last-child {
+    border-bottom: none;
+}
+
+.order-name {
+    flex: 1;
+    overflow: hidden;
+}
+
+.order-main {
+    display: block;
+    font-size: 26rpx;
+    color: #1f2329;
+}
+
+.order-sub {
+    display: block;
+    margin-top: 4rpx;
+    font-size: 22rpx;
+    color: #b6bcc8;
+}
+
+.seg-mini {
+    flex: none;
+    width: 220rpx;
+    margin-top: 0;
+    margin-left: 16rpx;
+}
+
+.seg-mini .seg-item {
+    padding: 10rpx 0;
+    font-size: 22rpx;
+}
+
 .seg {
     display: flex;
     margin-top: 4rpx;
