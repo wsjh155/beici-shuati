@@ -92,13 +92,14 @@ function parseQuestionLines(text, type) {
                 analysis,
             });
         } else {
-            if (parts.length < 5) {
+            // 题干 | A | B | C | D | 答案 | 解析（解析可省略，也可含竖线）
+            if (parts.length < 6) {
                 continue;
             }
-            const analysis = parts[parts.length - 1] || '';
-            const answer = (parts[parts.length - 2] || '').toUpperCase().replace(/\s+/g, '');
-            const options = parts.slice(1, parts.length - 2);
-            if (!answer || options.length < 2) {
+            const options = parts.slice(1, 5);
+            const answer = (parts[5] || '').toUpperCase().replace(/\s+/g, '');
+            const analysis = parts.slice(6).join(' | ');
+            if (!/^[A-D]+$/.test(answer) || options.some((o) => !o)) {
                 continue;
             }
             const qType = answer.length > 1 ? 'multiple' : 'single';

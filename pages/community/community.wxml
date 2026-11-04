@@ -49,7 +49,7 @@
             <view class="card" wx:for="{{wordLibs}}" wx:key="id">
                 <view class="card-info">
                     <text class="card-name">{{item.displayName}}</text>
-                    <text class="card-desc">{{item.description}}</text>
+                    <text class="card-desc">{{item.kind === 'full' ? '完整大纲词表' : '高频核心词'}}</text>
                     <text class="card-count">{{item.word_count}} 词</text>
                 </view>
                 <button wx:if="{{item.subscribed}}" class="btn-off" disabled>已订阅</button>
