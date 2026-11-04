@@ -1,5 +1,6 @@
 const { ensureSession } = require('../../utils/auth');
 const store = require('../../utils/store');
+const prefs = require('../../utils/prefs');
 
 Page({
     data: {
@@ -28,14 +29,16 @@ Page({
 
     async load() {
         this.setData({ loading: true });
-        const [seriesResult, libsResult, booksResult] = await Promise.all([
+        const [seriesResult, libsResult, booksResult, settingsResult] = await Promise.all([
             store.listWordSeries(),
             store.listWordLibraries(),
             store.listWordbooks(),
+            store.getPlanSettings(),
         ]);
         if (this.data.authState !== 'signed-in') {
             return;
         }
+        const globalOrder = settingsResult.data && settingsResult.data.word_order === 'order' ? 'order' : 'random';
         const subscribedLibIds = new Set(
             (booksResult.data || [])
                 .map((b) => b.preset_library_id)
@@ -45,14 +48,38 @@ Page({
             ...s,
             libraries: (libsResult.data || [])
                 .filter((l) => l.series_id === s.id)
-                .map((l) => ({ ...l, subscribed: subscribedLibIds.has(l.id) })),
+                .map((l) => ({
+                    ...l,
+                    subscribed: subscribedLibIds.has(l.id),
+                    order: prefs.getLibraryOrder(l.id, globalOrder),
+                })),
         }));
-        this.setData({ loading: false, series });
+        this.setData({ loading: false, series, globalOrder });
+    },
+
+    // 单个词库切换「乱序 / 顺序」（保存在本机，下次进来沿用）
+    toggleLibOrder(e) {
+        const id = e.currentTarget.dataset.id;
+        const si = e.currentTarget.dataset.si;
+        const li = e.currentTarget.dataset.li;
+        const series = this.data.series.slice();
+        const lib = series[si] && series[si].libraries[li];
+        if (!lib) {
+            return;
+        }
+        const next = lib.order === 'order' ? 'random' : 'order';
+        prefs.setLibraryOrder(id, next);
+        const libs = series[si].libraries.slice();
+        libs[li] = { ...lib, order: next };
+        series[si] = { ...series[si], libraries: libs };
+        this.setData({ series });
+        wx.showToast({ title: next === 'random' ? '已设为乱序' : '已设为顺序', icon: 'none' });
     },
 
     goStudy(e) {
         const id = e.currentTarget.dataset.id;
-        wx.navigateTo({ url: '/pages/study/study?mode=library&libraryId=' + id });
+        const order = e.currentTarget.dataset.order || 'random';
+        wx.navigateTo({ url: '/pages/study/study?mode=library&libraryId=' + id + '&order=' + order });
     },
 
     onSubscribe(e) {

@@ -33,7 +33,7 @@
             <text class="progress-text">{{index + 1}} / {{questions.length}}</text>
             <view class="tag-wrap">
                 <view class="order-pill" bindtap="toggleOrder">
-                    <text class="order-pill-text">{{orderMode === 'random' ? '🔀 乱序' : '🔢 正序'}}</text>
+                    <text class="order-pill-text">{{orderMode === 'random' ? '🔀 乱序' : '🔢 顺序'}}</text>
                 </view>
                 <text class="type-tag">{{current.type === 'multiple' ? '多选题' : (current.type === 'judge' ? '判断题' : (current.type === 'subjective' ? '简答题' : '单选题'))}}</text>
                 <text class="ai-badge" wx:if="{{current.ai_generated}}">AI生成</text>

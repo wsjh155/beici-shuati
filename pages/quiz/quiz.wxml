@@ -29,7 +29,7 @@
             </view>
             <view class="seg">
                 <view class="seg-item {{orderMode === 'random' ? 'seg-active' : ''}}" data-mode="random" bindtap="onOrderTap">🔀 乱序</view>
-                <view class="seg-item {{orderMode === 'order' ? 'seg-active' : ''}}" data-mode="order" bindtap="onOrderTap">🔢 正序</view>
+                <view class="seg-item {{orderMode === 'order' ? 'seg-active' : ''}}" data-mode="order" bindtap="onOrderTap">🔢 顺序</view>
             </view>
         </view>
 

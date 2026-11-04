@@ -128,7 +128,7 @@ Page({
         if (this.data.authState !== 'signed-in') {
             return;
         }
-        // 正序基准（错题优先等筛选顺序），乱序只在展示时打乱
+        // 顺序基准（错题优先等筛选顺序），乱序只在展示时打乱
         this.baseQuestions = (result.data || []).map((q) => ({ ...q, options: parseOptions(q) }));
         const questions = store.applyOrder(this.baseQuestions, orderMode);
         this.setData({
@@ -156,7 +156,7 @@ Page({
         const list = head.concat(store.applyOrder(rest, next));
         this.setData({ orderMode: next, questions: list });
         store.saveOrderMode('question', next);
-        wx.showToast({ title: next === 'random' ? '已切换为乱序' : '已切换为正序', icon: 'none' });
+        wx.showToast({ title: next === 'random' ? '已切换为乱序' : '已切换为顺序', icon: 'none' });
     },
 
     onOptionTap(e) {

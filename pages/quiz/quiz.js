@@ -59,7 +59,7 @@ Page({
         });
     },
 
-    // 乱序 / 正序切换（立即保存）
+    // 乱序 / 顺序切换（立即保存）
     async onOrderTap(e) {
         const mode = e.currentTarget.dataset.mode === 'order' ? 'order' : 'random';
         if (mode === this.data.orderMode) {
@@ -71,7 +71,7 @@ Page({
             wx.showToast({ title: '保存失败', icon: 'none' });
             return;
         }
-        wx.showToast({ title: mode === 'random' ? '已设为乱序' : '已设为正序', icon: 'none' });
+        wx.showToast({ title: mode === 'random' ? '已设为乱序' : '已设为顺序', icon: 'none' });
     },
 
     // 底部「刷题」标签点按：直接进入刷题

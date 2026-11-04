@@ -1,5 +1,6 @@
 const { ensureSession } = require('../../utils/auth');
 const store = require('../../utils/store');
+const prefs = require('../../utils/prefs');
 
 Page({
     data: {
@@ -17,16 +18,19 @@ Page({
         done: false,
         learnedCount: 0,
         orderMode: 'random',
+        orderOverride: '',
     },
 
     onLoad(options) {
         const mode = options.mode;
         const allowed = ['review', 'library', 'learned', 'plan', 'planPool'];
+        const orderOverride = options.order === 'order' || options.order === 'random' ? options.order : '';
         this.setData({
             mode: allowed.indexOf(mode) >= 0 ? mode : 'book',
             wordbookId: options.wordbookId || null,
             libraryId: options.libraryId || null,
             singleWord: options.word ? decodeURIComponent(options.word) : '',
+            orderOverride,
         });
         this.audioCtx = null;
     },
@@ -59,7 +63,9 @@ Page({
         this.setData({ loading: true });
         const settingsRes = await store.getPlanSettings();
         const st = settingsRes.data || {};
-        const orderMode = st.word_order === 'order' ? 'order' : 'random';
+        // 单个词库可单独设顺序（从词库页进来时带 order），否则跟随背词计划
+        const orderMode = this.data.orderOverride
+            || (st.word_order === 'order' ? 'order' : 'random');
         const dailyNew = st.daily_new != null ? st.daily_new : 20;
         const dailyReview = st.daily_review != null ? st.daily_review : 50;
         let list = [];
@@ -117,7 +123,7 @@ Page({
         if (this.data.authState !== 'signed-in') {
             return;
         }
-        // 正序基准（接口返回顺序），乱序只在展示时打乱
+        // 顺序基准（接口返回顺序），乱序只在展示时打乱
         this.baseList = list;
         this.consumedItems = [];
         const ordered = store.applyOrder(list, orderMode);
@@ -142,7 +148,7 @@ Page({
         return (item.id || '') + '|' + (item.word || '');
     },
 
-    // 学习页顶部「乱序 / 正序」切换：保留已学，只重排剩余卡片
+    // 学习页顶部「乱序 / 顺序」切换：保留已学，只重排剩余卡片
     toggleOrder() {
         const next = this.data.orderMode === 'random' ? 'order' : 'random';
         const base = this.baseList || this.data.wordList || [];
@@ -154,14 +160,20 @@ Page({
         const idx = consumed.length;
         this.setData({
             orderMode: next,
+            orderOverride: next,
             wordList: list,
             total: list.length,
             currentIndex: idx,
             current: list[idx] || null,
             flipped: false,
         });
-        store.saveOrderMode('word', next);
-        wx.showToast({ title: next === 'random' ? '已切换为乱序' : '已切换为正序', icon: 'none' });
+        // 词库学习：只改这个词库的顺序；其余场景改全局背词计划
+        if (this.data.libraryId) {
+            prefs.setLibraryOrder(this.data.libraryId, next);
+        } else {
+            store.saveOrderMode('word', next);
+        }
+        wx.showToast({ title: next === 'random' ? '已切换为乱序' : '已切换为顺序', icon: 'none' });
     },
 
     // 按背词计划取今日学习集：复习上限 dailyReview + 新词上限 dailyNew
