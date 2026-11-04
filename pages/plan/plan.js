@@ -115,15 +115,25 @@ Page({
         this.setData({ autoAdjust: e.detail.value });
     },
 
-    // 顺序切换：kind = word | question
-    onOrderTap(e) {
-        const kind = e.currentTarget.dataset.kind;
+    // 顺序切换：kind = word | question（立即保存，无需点保存按钮）
+    async onOrderTap(e) {
+        const kind = e.currentTarget.dataset.kind === 'question' ? 'question' : 'word';
         const mode = e.currentTarget.dataset.mode === 'order' ? 'order' : 'random';
+        const current = kind === 'question' ? this.data.questionOrder : this.data.wordOrder;
+        if (mode === current) {
+            return;
+        }
         if (kind === 'question') {
             this.setData({ questionOrder: mode });
         } else {
             this.setData({ wordOrder: mode });
         }
+        const r = await store.saveOrderMode(kind, mode);
+        if (r.error) {
+            wx.showToast({ title: '保存失败', icon: 'none' });
+            return;
+        }
+        wx.showToast({ title: mode === 'random' ? '已设为乱序' : '已设为正序', icon: 'none' });
     },
 
     async save() {
