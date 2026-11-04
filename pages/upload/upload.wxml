@@ -1,0 +1,47 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:else class="content">
+        <view class="header">
+            <text class="title">上传共享库</text>
+            <text class="subtitle">发布后所有人都能在「预设题库 · 订阅」里选择性订阅，只有你能修改或删除</text>
+        </view>
+
+        <view class="seg">
+            <view class="seg-item {{kind === 'question' ? 'active' : ''}}" data-kind="question" bindtap="onKindTap">题库</view>
+            <view class="seg-item {{kind === 'word' ? 'active' : ''}}" data-kind="word" bindtap="onKindTap">词库</view>
+        </view>
+
+        <view class="form">
+            <text class="label">名称（必填）</text>
+            <input class="input" placeholder="例如：有机化学 · 反应机理 300 题" value="{{name}}" bindinput="onNameInput" />
+            <text class="label">分类</text>
+            <input class="input" placeholder="例如：考研 / 化学 / 四级" value="{{category}}" bindinput="onCategoryInput" />
+            <text class="label">简介</text>
+            <input class="input" placeholder="一句话说明这份库的内容" value="{{description}}" bindinput="onDescInput" />
+            <text class="label">署名</text>
+            <input class="input" placeholder="展示给其他用户看的昵称" value="{{authorName}}" bindinput="onAuthorInput" />
+
+            <view wx:if="{{kind === 'question'}}" class="seg qtype">
+                <view class="seg-item {{qType === 'choice' ? 'active' : ''}}" data-type="choice" bindtap="onQTypeTap">选择题</view>
+                <view class="seg-item {{qType === 'judge' ? 'active' : ''}}" data-type="judge" bindtap="onQTypeTap">判断题</view>
+                <view class="seg-item {{qType === 'subjective' ? 'active' : ''}}" data-type="subjective" bindtap="onQTypeTap">简答题</view>
+            </view>
+
+            <text class="label">内容（每行一条，支持从 Excel 直接复制）</text>
+            <textarea class="textarea" placeholder="{{tip}}" value="{{text}}" bindinput="onTextInput" maxlength="-1" />
+            <text class="tip">{{tip}}</text>
+            <text class="count">已解析 {{parsedCount}} 条</text>
+        </view>
+
+        <button class="submit" loading="{{submitting}}" bindtap="submit">发布到共享订阅</button>
+        <text class="note">单次最多 2000 条；同一份库请一次传完，避免重复发布。</text>
+    </view>
+</view>

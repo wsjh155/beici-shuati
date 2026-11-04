@@ -11,9 +11,9 @@ Page({
         menus: [
             { key: 'words', emoji: '📖', text: '背单词', desc: '卡片学习与发音', path: '/pages/words/words', tab: true },
             { key: 'quiz', emoji: '✏️', text: '刷题', desc: '题库练习自动判分', path: '/pages/quiz/quiz', tab: true },
-            { key: 'word-overview', emoji: '📚', text: '词库总览', desc: '选择词库订阅，自动进总计划', path: '/pages/preset/preset', tab: false },
-            { key: 'question-overview', emoji: '🗂️', text: '我的题库', desc: '查看全部题库（仅自己可见），点进去可单独刷', path: '/pages/preset-bank/preset-bank', tab: false },
-            { key: 'preset', emoji: '📚', text: '预设词库', desc: '四六级考研等一键订阅', path: '/pages/preset/preset', tab: false },
+            { key: 'library-manage', emoji: '🗂️', text: '题库 / 词库总览', desc: '管理自己的题库与词库，点进去可单独练，也能取消订阅', path: '/pages/preset-bank/preset-bank', tab: false },
+            { key: 'subscribe', emoji: '🌍', text: '预设题库 · 订阅', desc: '官方预设题库/词库 + 大家上传的共享库，选择性订阅', path: '/pages/community/community', tab: false },
+            { key: 'preset', emoji: '📚', text: '按等级背词', desc: '中高考、四六级、考研、雅思词库直接开背', path: '/pages/preset/preset', tab: false },
             { key: 'learned', emoji: '🌟', text: '学习记录', desc: '删除记录即可重学单词/题目', path: '/pages/learned/learned', tab: false },
             { key: 'plan', emoji: '🗓️', text: '背词计划', desc: '每日计划与复习提醒', path: '/pages/plan/plan', tab: false },
             { key: 'import', emoji: '📥', text: '导入', desc: '导入单词或题目', path: '/pages/import/import', tab: false },

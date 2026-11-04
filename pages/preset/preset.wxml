@@ -14,6 +14,8 @@
             <text class="subtitle">点词库名直接背诵（顺序在「背词计划 → 词库顺序」里改），也可「订阅」加入我的单词本</text>
         </view>
 
+        <button style="margin:0 0 24rpx;height:72rpx;font-size:26rpx;color:#3b6ef5;background:#eef3ff;border-radius:18rpx;" bindtap="goSubscribe">去「预设题库 · 订阅」订阅题库 / 共享库</button>
+
         <view wx:if="{{series.length === 0 && !loading}}" class="empty">
             <text class="empty-emoji">📚</text>
             <text class="empty-text">暂无词库</text>

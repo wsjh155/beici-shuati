@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "预设题库 · 订阅",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}

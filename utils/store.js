@@ -672,6 +672,178 @@ async function subscribePresetQuestionBank(presetBankId) {
     return { data: { bank: qb, count: created.data }, error: null };
 }
 
+// ==================== 取消订阅 / 删除自己的题库或词库（级联清理） ====================
+async function deleteBankCascade(bankId) {
+    const qs = await safe(() => db().from('questions').select('id').eq('bank_id', bankId));
+    if (qs.error) {
+        return { data: null, error: qs.error };
+    }
+    const ids = (qs.data || []).map((q) => q.id);
+    const CHUNK = 400;
+    for (let i = 0; i < ids.length; i += CHUNK) {
+        const part = ids.slice(i, i + CHUNK);
+        const tables = ['plan_items', 'question_marks', 'wrong_questions'];
+        for (let t = 0; t < tables.length; t++) {
+            const r = await safe(() => db().from(tables[t]).delete().in('question_id', part).select('*'));
+            if (r.error) {
+                return { data: null, error: r.error };
+            }
+        }
+    }
+    const qsDel = await safe(() => db().from('questions').delete().eq('bank_id', bankId).select('*'));
+    if (qsDel.error) {
+        return { data: null, error: qsDel.error };
+    }
+    return safe(() => db().from('question_banks').delete().eq('id', bankId).select('*'));
+}
+
+async function deleteWordbookCascade(wordbookId) {
+    const ws = await safe(() => db().from('words').select('word').eq('wordbook_id', wordbookId));
+    if (ws.error) {
+        return { data: null, error: ws.error };
+    }
+    const words = (ws.data || []).map((w) => w.word);
+    const CHUNK = 400;
+    for (let i = 0; i < words.length; i += CHUNK) {
+        const part = words.slice(i, i + CHUNK);
+        const tables = ['plan_items', 'user_word_marks'];
+        for (let t = 0; t < tables.length; t++) {
+            const r = await safe(() => db().from(tables[t]).delete().in('word', part).select('*'));
+            if (r.error) {
+                return { data: null, error: r.error };
+            }
+        }
+    }
+    const wsDel = await safe(() => db().from('words').delete().eq('wordbook_id', wordbookId).select('*'));
+    if (wsDel.error) {
+        return { data: null, error: wsDel.error };
+    }
+    return safe(() => db().from('wordbooks').delete().eq('id', wordbookId).select('*'));
+}
+
+// ==================== 用户共享题库 / 词库 ====================
+// 所有人可读并可选择性订阅；只有上传者本人能修改/删除。
+function listSharedLibraries(kind) {
+    let query = db().from('shared_libraries').select('*').order('created_at', { ascending: false });
+    if (kind === 'question' || kind === 'word') {
+        query = query.eq('kind', kind);
+    }
+    return safe(() => query);
+}
+
+async function createSharedLibrary(meta, items) {
+    const created = await safe(() => db().from('shared_libraries').insert({
+        kind: meta.kind,
+        name: meta.name,
+        category: meta.category,
+        description: meta.description,
+        item_count: items.length,
+        author_name: meta.authorName || '',
+    }).select('*'));
+    if (created.error || !created.data || !created.data[0]) {
+        return { data: null, error: created.error || { message: '创建共享库失败' } };
+    }
+    const lib = created.data[0];
+    const CHUNK = 100;
+    for (let i = 0; i < items.length; i += CHUNK) {
+        const chunk = items.slice(i, i + CHUNK).map((item, j) => ({
+            library_id: lib.id,
+            payload: item,
+            sort_order: i + j,
+        }));
+        const r = await safe(() => db().from('shared_library_items').insert(chunk));
+        if (r.error) {
+            return { data: null, error: r.error };
+        }
+    }
+    return { data: lib, error: null };
+}
+
+// 单个共享库最多 2000 条，一次取回即可（上传页已做上限校验）
+async function listSharedLibraryItems(libraryId) {
+    const r = await safe(() => db().from('shared_library_items')
+        .select('payload, sort_order')
+        .eq('library_id', libraryId)
+        .order('sort_order', { ascending: true })
+        .limit(2000));
+    if (r.error) {
+        return { data: null, error: r.error };
+    }
+    return { data: (r.data || []).map((x) => x.payload), error: null };
+}
+
+// 订阅共享库：复制到自己的私有题库/单词本，并自动加入总计划
+async function subscribeSharedLibrary(libraryId) {
+    const libResult = await safe(() => db().from('shared_libraries')
+        .select('*').eq('id', libraryId).maybeSingle());
+    if (libResult.error || !libResult.data) {
+        return { data: null, error: libResult.error || { message: '共享库不存在' } };
+    }
+    const lib = libResult.data;
+    const itemsResult = await listSharedLibraryItems(libraryId);
+    if (itemsResult.error) {
+        return { data: null, error: itemsResult.error };
+    }
+    const items = itemsResult.data || [];
+    if (items.length === 0) {
+        return { data: null, error: { message: '这个共享库还没有内容' } };
+    }
+    if (lib.kind === 'word') {
+        const exist = await safe(() => db().from('wordbooks')
+            .select('id').eq('name', lib.name).limit(1).maybeSingle());
+        if (exist.data) {
+            return { data: { count: 0, already: true }, error: null };
+        }
+        const wbResult = await safe(() => db().from('wordbooks').insert({
+            name: lib.name,
+            category: lib.category,
+            description: lib.description || '来自共享社区',
+        }).select('*'));
+        if (wbResult.error || !wbResult.data) {
+            return { data: null, error: wbResult.error || { message: '创建单词本失败' } };
+        }
+        const wb = wbResult.data[0];
+        const created = await batchCreateWords(wb.id, items);
+        if (created.error) {
+            return { data: null, error: created.error };
+        }
+        await addWordsToPlan(items.map((w) => w.word));
+        return { data: { count: created.data, wordbook: wb }, error: null };
+    }
+    const exist = await safe(() => db().from('question_banks')
+        .select('id').eq('name', lib.name).limit(1).maybeSingle());
+    if (exist.data) {
+        return { data: { count: 0, already: true }, error: null };
+    }
+    const qbResult = await safe(() => db().from('question_banks').insert({
+        name: lib.name,
+        category: lib.category,
+        description: lib.description || '来自共享社区',
+    }).select('*'));
+    if (qbResult.error || !qbResult.data) {
+        return { data: null, error: qbResult.error || { message: '创建题库失败' } };
+    }
+    const qb = qbResult.data[0];
+    const created = await batchCreateQuestions(qb.id, items);
+    if (created.error) {
+        return { data: null, error: created.error };
+    }
+    const newQs = await safe(() => db().from('questions').select('id').eq('bank_id', qb.id));
+    if (newQs.data && newQs.data.length > 0) {
+        await addQuestionsToPlan(newQs.data.map((q) => q.id));
+    }
+    return { data: { count: created.data, bank: qb }, error: null };
+}
+
+async function deleteSharedLibrary(libraryId) {
+    const itemsResult = await safe(() => db().from('shared_library_items')
+        .delete().eq('library_id', libraryId).select('*'));
+    if (itemsResult.error) {
+        return { data: null, error: itemsResult.error };
+    }
+    return safe(() => db().from('shared_libraries').delete().eq('id', libraryId).select('*'));
+}
+
 // ==================== 云端词库（等级 → 子词库 → 单词） ====================
 function listWordSeries() {
     return safe(() => db().from('word_series').select('*').order('sort_order', { ascending: true }));
@@ -1049,6 +1221,14 @@ module.exports = {
     listPresetQuestionBanks,
     listPresetQuestions,
     subscribePresetQuestionBank,
+    // 用户共享题库 / 词库
+    deleteBankCascade,
+    deleteWordbookCascade,
+    listSharedLibraries,
+    createSharedLibrary,
+    listSharedLibraryItems,
+    subscribeSharedLibrary,
+    deleteSharedLibrary,
     // 云端词库（等级/子词库/单词/标记）
     listWordSeries,
     listWordLibraries,

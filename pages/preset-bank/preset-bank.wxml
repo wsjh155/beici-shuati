@@ -10,40 +10,49 @@
 
     <view wx:else class="content">
         <view class="header">
-            <text class="title">我的题库</text>
-            <text class="subtitle">共 {{myBanks.length}} 个题库、{{totalQuestions}} 道题，点题库名直接开始刷题</text>
+            <text class="title">我的题库 / 词库</text>
+            <text class="subtitle">管理自己已订阅的内容，可单独练习或取消订阅</text>
         </view>
 
-        <view wx:if="{{myBanks.length === 0 && !loading}}" class="empty">
-            <text class="empty-emoji">📭</text>
-            <text class="empty-text">还没有题库</text>
-            <text class="empty-sub">可在「刷题 → 新建题库」创建，或下方订阅预设题库</text>
+        <view class="entry-row">
+            <button class="entry-btn" bindtap="goSubscribe">去「预设题库」订阅更多</button>
         </view>
 
-        <view class="group" wx:if="{{myBanks.length > 0}}">
-            <view class="bank-item" wx:for="{{myBanks}}" wx:key="id" data-id="{{item.id}}" bindtap="goPractice">
-                <view class="bank-info">
+        <view class="tab-bar">
+            <view class="tab-item {{tab === 'question' ? 'active' : ''}}" data-tab="question" bindtap="onTabTap">题库 {{totalQuestions}} 题</view>
+            <view class="tab-item {{tab === 'word' ? 'active' : ''}}" data-tab="word" bindtap="onTabTap">词库 {{totalWords}} 词</view>
+        </view>
+
+        <view wx:if="{{tab === 'question'}}">
+            <view wx:if="{{myBanks.length === 0 && !loading}}" class="empty">
+                <text class="empty-emoji">📭</text>
+                <text class="empty-text">还没有题库</text>
+                <text class="empty-sub">到「预设题库」订阅，或「刷题 → 新建题库」自己建</text>
+            </view>
+            <view class="bank-item" wx:for="{{myBanks}}" wx:key="id">
+                <view class="bank-info" data-id="{{item.id}}" bindtap="goPractice">
                     <text class="bank-name">{{item.name}}</text>
                     <text class="bank-desc" wx:if="{{item.description}}">{{item.description}}</text>
-                    <text class="bank-count">{{item.count}} 题</text>
+                    <text class="bank-count">{{item.count}} 题{{item.fromPreset ? ' · 订阅所得' : ''}}</text>
                 </view>
-                <text class="bank-arrow">›</text>
+                <button class="btn-remove" data-id="{{item.id}}" data-kind="question" data-name="{{item.name}}" loading="{{removingId === item.id}}" catchtap="onRemove">取消订阅</button>
             </view>
         </view>
 
-        <view class="group" wx:for="{{presetGroups}}" wx:key="category" wx:for-item="g">
-            <text class="group-title">{{g.category}}</text>
-            <view class="bank-item" wx:for="{{g.banks}}" wx:key="id" wx:for-item="bank">
-                <view class="bank-info">
-                    <text class="bank-name">{{bank.name}}</text>
-                    <text class="bank-desc">{{bank.description}}</text>
-                    <text class="bank-count">{{bank.question_count}} 题</text>
+        <view wx:if="{{tab === 'word'}}">
+            <view wx:if="{{myBooks.length === 0 && !loading}}" class="empty">
+                <text class="empty-emoji">📚</text>
+                <text class="empty-text">还没有词库</text>
+                <text class="empty-sub">到「预设题库」订阅词库</text>
+            </view>
+            <view class="bank-item" wx:for="{{myBooks}}" wx:key="id">
+                <view class="bank-info" data-id="{{item.id}}" bindtap="goStudy">
+                    <text class="bank-name">{{item.name}}</text>
+                    <text class="bank-desc" wx:if="{{item.description}}">{{item.description}}</text>
+                    <text class="bank-count">{{item.count}} 词{{item.fromPreset ? ' · 订阅所得' : ''}}</text>
                 </view>
-                <button wx:if="{{bank.subscribed}}" class="btn-subscribed" disabled>已订阅</button>
-                <button wx:else class="btn-subscribe" data-id="{{bank.id}}" loading="{{subscribingId === bank.id}}" bindtap="onSubscribe">订阅</button>
+                <button class="btn-remove" data-id="{{item.id}}" data-kind="word" data-name="{{item.name}}" loading="{{removingId === item.id}}" catchtap="onRemove">取消订阅</button>
             </view>
         </view>
-
-        <text wx:if="{{presetGroups.length === 0}}" class="preset-empty">预设题库已清空：所有题目都在上面的「我的题库」里，不需要再订阅</text>
     </view>
 </view>

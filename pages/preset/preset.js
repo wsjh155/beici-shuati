@@ -57,6 +57,10 @@ Page({
         this.setData({ loading: false, series, globalOrder });
     },
 
+    goSubscribe() {
+        wx.navigateTo({ url: '/pages/community/community' });
+    },
+
     // 顺序来自「背词计划 → 词库顺序」，这里只负责带着它进入学习
     goStudy(e) {
         const id = e.currentTarget.dataset.id;

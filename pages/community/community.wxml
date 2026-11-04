@@ -1,0 +1,80 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:else class="content">
+        <view class="header">
+            <text class="title">预设题库 · 订阅</text>
+            <text class="subtitle">官方预设题库、词库和大家上传的共享库都在这里订阅；订阅后自动加入总计划</text>
+        </view>
+
+        <view class="entry-row">
+            <button class="entry-btn primary" bindtap="goUpload">＋ 上传我的题库/词库</button>
+            <button class="entry-btn" bindtap="goManage">管理 · 取消订阅</button>
+        </view>
+
+        <view class="tab-bar">
+            <view class="tab-item {{tab === 'question' ? 'active' : ''}}" data-tab="question" bindtap="onTabTap">预设题库 {{presetBanks.length}}</view>
+            <view class="tab-item {{tab === 'word' ? 'active' : ''}}" data-tab="word" bindtap="onTabTap">预设词库 {{wordLibs.length}}</view>
+            <view class="tab-item {{tab === 'shared' ? 'active' : ''}}" data-tab="shared" bindtap="onTabTap">用户共享 {{sharedLibs.length}}</view>
+        </view>
+
+        <view wx:if="{{tab === 'question'}}">
+            <view wx:if="{{presetBanks.length === 0 && !loading}}" class="empty">
+                <text class="empty-emoji">🗂️</text>
+                <text class="empty-text">暂无预设题库</text>
+            </view>
+            <view class="card" wx:for="{{presetBanks}}" wx:key="id">
+                <view class="card-info">
+                    <text class="card-name">{{item.name}}</text>
+                    <text class="card-desc">{{item.description}}</text>
+                    <text class="card-count">{{item.category}} · {{item.question_count}} 题</text>
+                </view>
+                <button wx:if="{{item.subscribed}}" class="btn-off" disabled>已有</button>
+                <button wx:else class="btn-on" data-id="{{item.id}}" loading="{{subscribingId === 'preset:' + item.id}}" bindtap="onSubscribePreset">订阅</button>
+            </view>
+        </view>
+
+        <view wx:if="{{tab === 'word'}}">
+            <view wx:if="{{wordLibs.length === 0 && !loading}}" class="empty">
+                <text class="empty-emoji">📚</text>
+                <text class="empty-text">暂无预设词库</text>
+            </view>
+            <view class="card" wx:for="{{wordLibs}}" wx:key="id">
+                <view class="card-info">
+                    <text class="card-name">{{item.displayName}}</text>
+                    <text class="card-desc">{{item.description}}</text>
+                    <text class="card-count">{{item.word_count}} 词</text>
+                </view>
+                <button wx:if="{{item.subscribed}}" class="btn-off" disabled>已订阅</button>
+                <button wx:else class="btn-on" data-id="{{item.id}}" loading="{{subscribingId === 'word:' + item.id}}" bindtap="onSubscribeWord">订阅</button>
+            </view>
+        </view>
+
+        <view wx:if="{{tab === 'shared'}}">
+            <view wx:if="{{sharedLibs.length === 0 && !loading}}" class="empty">
+                <text class="empty-emoji">🌍</text>
+                <text class="empty-text">还没有人上传共享库</text>
+                <text class="empty-sub">点上方「上传我的题库/词库」成为第一个</text>
+            </view>
+            <view class="card" wx:for="{{sharedLibs}}" wx:key="id">
+                <view class="card-info">
+                    <text class="card-name">{{item.name}}</text>
+                    <text class="card-desc">{{item.description}}</text>
+                    <text class="card-count">{{item.category}} · {{item.kindLabel}} · {{item.item_count}} {{item.unit}} · 由 {{item.author_name || '匿名用户'}} 上传</text>
+                </view>
+                <view class="card-actions">
+                    <button wx:if="{{item.isMine}}" class="btn-del" data-id="{{item.id}}" bindtap="onDeleteShared">删除</button>
+                    <button wx:if="{{item.subscribed}}" class="btn-off" disabled>已有</button>
+                    <button wx:else class="btn-on" data-id="{{item.id}}" loading="{{subscribingId === 'shared:' + item.id}}" bindtap="onSubscribeShared">订阅</button>
+                </view>
+            </view>
+        </view>
+    </view>
+</view>

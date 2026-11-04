@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "预设题库",
+  "navigationBarTitleText": "我的题库 / 词库",
   "usingComponents": {
     "login-panel": "../../components/login-panel/login-panel"
   }

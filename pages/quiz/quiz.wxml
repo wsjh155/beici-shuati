@@ -65,7 +65,7 @@
         <view class="entry-list">
             <view class="entry" bindtap="goPresetBank">
                 <text class="entry-emoji">🗂️</text>
-                <text class="entry-text">我的题库（{{banks.length}} 个，点进去可单独刷）</text>
+                <text class="entry-text">题库 / 词库总览（{{banks.length}} 个，可管理、取消订阅）</text>
                 <text class="entry-arrow">›</text>
             </view>
             <view class="entry" bindtap="goPlan">
