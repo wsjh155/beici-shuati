@@ -476,15 +476,24 @@ async function listPlanQuestions(bankIds) {
         return { data: [], error: null };
     }
     const picked = bankIds && bankIds.length ? bankIds : null;
-    const out = [];
+    const chunks = [];
     const CHUNK = 400;
     for (let i = 0; i < ids.length; i += CHUNK) {
-        const chunk = ids.slice(i, i + CHUNK);
-        const r = await getQuestionsByIds(chunk, picked);
-        if (r.error) {
-            return { data: null, error: r.error };
+        chunks.push(ids.slice(i, i + CHUNK));
+    }
+    // 题库可能上千题：分批并发拉取，避免串行等待过久
+    const out = [];
+    const CONCURRENCY = 4;
+    for (let i = 0; i < chunks.length; i += CONCURRENCY) {
+        const batch = chunks.slice(i, i + CONCURRENCY);
+        const results = await Promise.all(batch.map((c) => getQuestionsByIds(c, picked)));
+        for (let j = 0; j < results.length; j++) {
+            const r = results[j];
+            if (r.error) {
+                return { data: null, error: r.error };
+            }
+            (r.data || []).forEach((q) => out.push(q));
         }
-        (r.data || []).forEach((q) => out.push(q));
     }
     return { data: out, error: null };
 }
