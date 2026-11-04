@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "背词计划",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}

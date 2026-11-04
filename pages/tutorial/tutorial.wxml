@@ -1,0 +1,52 @@
+<view class="page">
+    <view class="hero">
+        <text class="hero-title">新手教程</text>
+        <text class="hero-sub">3 分钟快速上手「背词刷题」</text>
+    </view>
+
+    <view class="step">
+        <text class="step-index">1</text>
+        <view class="step-body">
+            <text class="step-title">添加词库（单词）</text>
+            <text class="step-desc">底部「单词」页 →「添加词库」→ 选择等级，点击「订阅」。订阅后单词会自动进入你的总计划。</text>
+        </view>
+    </view>
+
+    <view class="step">
+        <text class="step-index">2</text>
+        <view class="step-body">
+            <text class="step-title">添加题库（刷题）</text>
+            <text class="step-desc">底部「刷题」页 →「添加题库」→「预设题库」里订阅，题目会自动进入刷题总计划。</text>
+        </view>
+    </view>
+
+    <view class="step">
+        <text class="step-index">3</text>
+        <view class="step-body">
+            <text class="step-title">设置每日计划</text>
+            <text class="step-desc">在「背词计划」里设置每日新词、复习量、每日刷题量。系统按艾宾浩斯曲线安排复习。</text>
+        </view>
+    </view>
+
+    <view class="step">
+        <text class="step-index">4</text>
+        <view class="step-body">
+            <text class="step-title">开始学习</text>
+            <text class="step-desc">直接点底部的「单词 / 刷题」标签，就会进入今天的学习；点「开始学习」也可以。</text>
+        </view>
+    </view>
+
+    <view class="step">
+        <text class="step-index">5</text>
+        <view class="step-body">
+            <text class="step-title">学习记录 &amp; 重学</text>
+            <text class="step-desc">「学习记录」可查看学过的单词和做过的题，支持批量删除记录；删掉后即会重新进入计划，相当于重学。</text>
+        </view>
+    </view>
+
+    <view class="tip-card">
+        <text class="tip-title">小提示</text>
+        <text class="tip-text">• 熟词可以标记「认识」快速跳过，达到一定次数后自动掌握，不再重复出现。</text>
+        <text class="tip-text">• 「错题回顾」可重做错题；「学习统计」查看进度与正确率。</text>
+    </view>
+</view>

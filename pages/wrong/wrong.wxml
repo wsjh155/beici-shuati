@@ -1,0 +1,44 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:else class="content">
+        <view class="list-header">
+            <text class="list-title">错题本</text>
+            <text class="list-count">{{wrongList.length}} 道</text>
+        </view>
+
+        <view wx:if="{{wrongList.length === 0 && !loading}}" class="empty">
+            <text class="empty-emoji">🎯</text>
+            <text class="empty-text">暂无错题</text>
+            <text class="empty-sub">练习中答错的题目会自动收录到这里</text>
+        </view>
+
+        <view class="wrong-list">
+            <view class="wrong-item" wx:for="{{wrongList}}" wx:key="wrongId">
+                <view class="wrong-head">
+                    <view class="tag-wrap">
+                        <text class="wrong-type">{{item.type === 'multiple' ? '多选' : (item.type === 'judge' ? '判断' : (item.type === 'subjective' ? '简答' : '单选'))}}</text>
+                        <text class="ai-badge" wx:if="{{item.aiGenerated}}">AI生成</text>
+                    </view>
+                    <text class="wrong-count">错 {{item.wrongCount}} 次</text>
+                </view>
+                <text class="wrong-stem">{{item.stem}}</text>
+                <view class="wrong-answer">
+                    <text class="wrong-answer-label">{{item.answerLabel}}</text>
+                    <text class="wrong-answer-value">{{item.answer}}</text>
+                </view>
+                <text class="wrong-analysis" wx:if="{{item.analysis}}">{{item.analysis}}</text>
+                <view class="wrong-actions">
+                    <button class="remove-btn" size="mini" data-id="{{item.wrongId}}" bindtap="removeWrong">已掌握，移除</button>
+                </view>
+            </view>
+        </view>
+    </view>
+</view>

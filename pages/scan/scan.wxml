@@ -1,0 +1,79 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:else class="content">
+        <!-- 目标题库 -->
+        <text class="field-label">保存到题库</text>
+        <picker mode="selector" range="{{bankNames}}" value="{{bankIndex}}" bindchange="onBankChange">
+            <view class="picker-value">{{bankNames[bankIndex]}} ▾</view>
+        </picker>
+        <input wx:if="{{bankIndex === 0}}" class="input" placeholder="新题库名称" value="{{newBankName}}" bindinput="onNewBankInput" />
+
+        <!-- 图片区域 -->
+        <view wx:if="{{!imagePath}}" class="photo-placeholder" bindtap="chooseImage">
+            <text class="photo-icon">📷</text>
+            <text class="photo-text">拍照或从相册选择题目图片</text>
+            <text class="photo-sub">建议单张图片只含一道题，识别更准确</text>
+        </view>
+        <view wx:else class="photo-area">
+            <image class="photo-preview" src="{{imagePath}}" mode="aspectFit" bindtap="chooseImage" />
+            <view class="photo-actions">
+                <button class="btn-rechoose" bindtap="chooseImage">重拍</button>
+                <button class="btn-recognize" loading="{{recognizing}}" disabled="{{recognizing}}" bindtap="doRecognize">{{recognizing ? '识别中…' : '识别题目'}}</button>
+            </view>
+        </view>
+
+        <!-- 识别结果表单 -->
+        <view wx:if="{{hasResult}}" class="form">
+            <text class="form-title">识别结果（请核对修改）</text>
+
+            <text class="field-label">题型</text>
+            <view class="type-row">
+                <view class="type-btn {{qType === 'single' || qType === 'multiple' ? 'type-active' : ''}}" data-type="single" bindtap="onTypeTap">选择题</view>
+                <view class="type-btn {{qType === 'judge' ? 'type-active' : ''}}" data-type="judge" bindtap="onTypeTap">判断题</view>
+                <view class="type-btn {{qType === 'subjective' ? 'type-active' : ''}}" data-type="subjective" bindtap="onTypeTap">简答题</view>
+            </view>
+
+            <text class="field-label">题干</text>
+            <textarea class="textarea" value="{{stem}}" bindinput="onStemInput" maxlength="2000" />
+
+            <block wx:if="{{qType === 'single' || qType === 'multiple'}}">
+                <text class="field-label">选项</text>
+                <view class="option-row" wx:for="{{options}}" wx:key="index">
+                    <text class="option-label">{{optionLabels[index]}}</text>
+                    <input class="input option-input" placeholder="选项 {{optionLabels[index]}}" value="{{item}}" data-idx="{{index}}" bindinput="onOptionInput" />
+                </view>
+                <text class="field-label">答案（字母，多选如 ABD）</text>
+                <input class="input" value="{{answer}}" bindinput="onAnswerInput" placeholder="如 A 或 ABD" />
+            </block>
+
+            <block wx:elif="{{qType === 'judge'}}">
+                <text class="field-label">答案</text>
+                <view class="judge-row">
+                    <view class="judge-btn {{judgeAnswer === 'A' ? 'judge-right' : ''}}" data-v="A" bindtap="onJudgeTap">正确</view>
+                    <view class="judge-btn {{judgeAnswer === 'B' ? 'judge-wrong' : ''}}" data-v="B" bindtap="onJudgeTap">错误</view>
+                </view>
+            </block>
+
+            <block wx:else>
+                <text class="field-label">参考答案</text>
+                <textarea class="textarea" value="{{answer}}" bindinput="onAnswerInput" maxlength="2000" />
+            </block>
+
+            <text class="field-label">解析（可选）</text>
+            <textarea class="textarea" value="{{analysis}}" bindinput="onAnalysisInput" maxlength="2000" />
+
+            <button class="btn-generate" loading="{{generating}}" disabled="{{generating}}" bindtap="doGenerate">✨ AI 自动生成答案与解析</button>
+            <text wx:if="{{aiGenerated}}" class="ai-tag">答案已由 AI 生成，请核对后保存</text>
+
+            <button class="btn-save" loading="{{saving}}" disabled="{{saving}}" bindtap="doSave">保存到题库</button>
+        </view>
+    </view>
+</view>

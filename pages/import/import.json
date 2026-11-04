@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "导入内容",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}

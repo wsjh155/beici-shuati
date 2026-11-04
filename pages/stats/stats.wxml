@@ -1,0 +1,58 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:else class="content">
+        <view class="stat-grid">
+            <view class="stat-card stat-primary">
+                <text class="stat-num">{{totalWords}}</text>
+                <text class="stat-label">累计单词</text>
+            </view>
+            <view class="stat-card stat-green">
+                <text class="stat-num">{{streak}}</text>
+                <text class="stat-label">连续学习（天）</text>
+            </view>
+            <view class="stat-card">
+                <text class="stat-num">{{practiceCount}}</text>
+                <text class="stat-label">练习次数</text>
+            </view>
+            <view class="stat-card">
+                <text class="stat-num">{{accuracy}}%</text>
+                <text class="stat-label">答题正确率</text>
+            </view>
+        </view>
+
+        <view class="detail-card">
+            <view class="detail-row">
+                <text class="detail-label">累计做题</text>
+                <text class="detail-value">{{totalQuestions}} 题</text>
+            </view>
+            <view class="detail-row">
+                <text class="detail-label">累计答对</text>
+                <text class="detail-value">{{totalCorrect}} 题</text>
+            </view>
+            <view class="detail-row">
+                <text class="detail-label">错题本</text>
+                <text class="detail-value">{{wrongCount}} 道</text>
+            </view>
+            <view class="detail-row">
+                <text class="detail-label">已做题目</text>
+                <text class="detail-value">{{doneQuestions}} 道</text>
+            </view>
+            <view class="detail-row">
+                <text class="detail-label">已掌握单词</text>
+                <text class="detail-value">{{mastered}} 词</text>
+            </view>
+            <view class="detail-row">
+                <text class="detail-label">词库学习</text>
+                <text class="detail-value">{{marksCount}} 词</text>
+            </view>
+        </view>
+    </view>
+</view>

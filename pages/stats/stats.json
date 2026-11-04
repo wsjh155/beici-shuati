@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "学习统计",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}

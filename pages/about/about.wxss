@@ -1,0 +1,81 @@
+.page {
+    box-sizing: border-box;
+    min-height: 100vh;
+    padding: 48rpx 32rpx;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.logo {
+    display: flex;
+    width: 128rpx;
+    height: 128rpx;
+    align-items: center;
+    justify-content: center;
+    border-radius: 32rpx;
+    background: #3b6ef5;
+    color: #ffffff;
+    font-size: 64rpx;
+    font-weight: 700;
+}
+
+.app-name {
+    margin-top: 24rpx;
+    font-size: 40rpx;
+    font-weight: 700;
+    color: #1f2329;
+}
+
+.app-version {
+    margin-top: 8rpx;
+    font-size: 24rpx;
+    color: #8a94a6;
+}
+
+.card {
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 24rpx;
+    padding: 32rpx;
+    border-radius: 24rpx;
+    background: #ffffff;
+    box-shadow: 0 4rpx 16rpx rgba(31, 35, 41, 0.04);
+}
+
+.card-title {
+    display: block;
+    font-size: 30rpx;
+    font-weight: 700;
+    color: #1f2329;
+}
+
+.card-text {
+    display: block;
+    margin-top: 14rpx;
+    font-size: 26rpx;
+    line-height: 1.8;
+    color: #5b6b82;
+}
+
+.link {
+    display: block;
+    margin-top: 14rpx;
+    font-size: 26rpx;
+    line-height: 1.6;
+    color: #3b6ef5;
+    word-break: break-all;
+}
+
+.copy-hint {
+    display: block;
+    margin-top: 6rpx;
+    font-size: 22rpx;
+    color: #b6bcc8;
+}
+
+.footer {
+    margin-top: 40rpx;
+    font-size: 24rpx;
+    color: #b6bcc8;
+}

@@ -1,0 +1,6 @@
+node_modules/
+.workbuddy/
+.wbapp_*
+generated-images/
+*.log
+.DS_Store

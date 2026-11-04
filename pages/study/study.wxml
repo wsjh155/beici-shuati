@@ -1,0 +1,58 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:elif="{{loading}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{total === 0}}" class="state-box">
+        <text class="empty-emoji">🎉</text>
+        <text class="empty-text">{{mode === 'planPool' ? '总计划里还没有单词' : (mode === 'library' ? '这个子词库的单词都背完了' : (mode === 'review' ? '暂无待复习的单词' : (mode === 'learned' ? '还没有学过的单词' : (mode === 'plan' ? '今日计划已完成' : '这个单词本还没有单词'))))}}</text>
+        <text class="empty-sub">{{mode === 'planPool' ? '去「词库总览」勾选单词加入总计划' : (mode === 'library' ? '已背会的单词会自动在其它子词库中去除' : (mode === 'review' ? '先去学习新单词吧' : (mode === 'learned' ? '先去背一些单词，学过的会出现在这里' : (mode === 'plan' ? '暂无到期待复习或新学的单词' : '可前往「导入内容」添加单词'))))}}</text>
+        <button class="back-btn" bindtap="goBack">返回</button>
+    </view>
+
+    <view wx:elif="{{done}}" class="state-box">
+        <text class="empty-emoji">🎊</text>
+        <text class="empty-text">本轮学习完成！</text>
+        <text class="empty-sub">本次共学习 {{learnedCount}} 个单词</text>
+        <button class="back-btn" bindtap="goBack">完成</button>
+    </view>
+
+    <view wx:else class="study">
+        <view class="progress-bar">
+            <view class="progress-fill" style="width: {{(currentIndex / total) * 100}}%"></view>
+        </view>
+        <text class="progress-text">{{currentIndex + 1}} / {{total}}</text>
+
+        <view class="card-scene">
+            <view class="card {{flipped ? 'flipped' : ''}}" bindtap="flipCard">
+                <view class="card-face card-front">
+                    <text class="word">{{current.word}}</text>
+                    <text class="phonetic" wx:if="{{current.phonetic}}">{{current.phonetic}}</text>
+                    <text class="hint">点击卡片查看释义</text>
+                </view>
+                <view class="card-face card-back">
+                    <text class="word-small">{{current.word}}</text>
+                    <text class="meaning">{{current.meaning || '暂无释义'}}</text>
+                    <text class="example" wx:if="{{current.example}}">{{current.example}}</text>
+                </view>
+            </view>
+        </view>
+
+        <view class="audio-btn" bindtap="playAudio">🔊 播放发音</view>
+
+        <view class="actions">
+            <button class="action-btn action-forgot" data-known="0" bindtap="mark">不认识</button>
+            <button class="action-btn action-known" data-known="1" bindtap="mark">认识</button>
+        </view>
+    </view>
+</view>

@@ -1,0 +1,70 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:else class="content">
+        <view class="overview">
+            <view class="ov-card ov-blue">
+                <text class="ov-num">{{dueCount}}</text>
+                <text class="ov-label">今日待复习</text>
+            </view>
+            <view class="ov-card ov-green">
+                <text class="ov-num">{{newCount}}</text>
+                <text class="ov-label">待学习新词</text>
+            </view>
+            <view class="ov-card">
+                <text class="ov-num">{{masteredCount}}/{{totalWords}}</text>
+                <text class="ov-label">已掌握</text>
+            </view>
+        </view>
+
+        <view class="card">
+            <text class="card-title">背词计划</text>
+            <view class="setting-row">
+                <text class="setting-label">每日新词</text>
+                <text class="setting-value">{{dailyNew}} 个</text>
+            </view>
+            <slider min="5" max="50" step="5" value="{{dailyNew}}" activeColor="#3b6ef5" block-size="24" bindchange="onNewChange" />
+
+            <view class="setting-row">
+                <text class="setting-label">每日复习</text>
+                <text class="setting-value">{{dailyReview}} 个</text>
+            </view>
+            <slider min="10" max="100" step="10" value="{{dailyReview}}" activeColor="#3b6ef5" block-size="24" bindchange="onReviewChange" />
+
+            <view class="setting-row">
+                <view class="setting-text">
+                    <text class="setting-label">根据掌握情况自动调整</text>
+                    <text class="setting-desc">学习时自动按正确率增减新词量</text>
+                </view>
+                <switch checked="{{autoAdjust}}" color="#3b6ef5" bindchange="onAutoToggle" />
+            </view>
+        </view>
+
+        <view class="card">
+            <text class="card-title">刷题计划</text>
+            <view class="setting-row">
+                <text class="setting-label">每日刷题</text>
+                <text class="setting-value">{{dailyQuestions}} 题</text>
+            </view>
+            <slider min="5" max="100" step="5" value="{{dailyQuestions}}" activeColor="#3b6ef5" block-size="24" bindchange="onQuestionsChange" />
+        </view>
+
+        <view class="card">
+            <text class="card-title">智能建议</text>
+            <text class="adjust-tip">{{adjustTip}}</text>
+            <text class="adjust-sub">近 7 天复习正确率：{{recentAccuracy}}%</text>
+            <text class="adjust-note">复习采用艾宾浩斯遗忘曲线间隔（1/2/4/7/15/30 天），到期自动提醒</text>
+        </view>
+
+        <button class="start-btn" bindtap="goStartPlan">▶ 开始今日计划</button>
+
+        <button class="save-btn" loading="{{saving}}" disabled="{{saving}}" bindtap="save">保存计划</button>
+    </view>
+</view>

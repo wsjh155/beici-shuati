@@ -1,0 +1,70 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:elif="{{loading}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:else class="content">
+        <view class="tabs">
+            <view class="tab {{tab === 'word' ? 'tab-active' : ''}}" data-tab="word" bindtap="switchTab">
+                <text class="tab-text">单词</text>
+                <text class="tab-num">{{wordCount}}</text>
+            </view>
+            <view class="tab {{tab === 'question' ? 'tab-active' : ''}}" data-tab="question" bindtap="switchTab">
+                <text class="tab-text">题目</text>
+                <text class="tab-num">{{questionCount}}</text>
+            </view>
+        </view>
+
+        <view class="toolbar" wx:if="{{(tab === 'word' && wordCount > 0) || (tab === 'question' && questionCount > 0)}}">
+            <text class="select-all" bindtap="toggleAll">{{allSelected ? '取消全选' : '全选'}}</text>
+            <text class="selected-count">已选 {{selectedCount}}</text>
+            <button class="batch-del-btn" disabled="{{selectedCount === 0}}" bindtap="batchDelete">删除所选</button>
+        </view>
+
+        <block wx:if="{{tab === 'word'}}">
+            <view wx:if="{{words.length === 0}}" class="empty">
+                <text class="empty-emoji">🌱</text>
+                <text class="empty-text">还没有单词学习记录</text>
+                <text class="empty-sub">先去背一些单词，学过的会出现在这里</text>
+            </view>
+            <view wx:else class="rec-list">
+                <view class="rec-row {{item.selected ? 'rec-selected' : ''}}" wx:for="{{words}}" wx:key="word" data-type="word" data-index="{{index}}" bindtap="toggleItem">
+                    <view class="check {{item.selected ? 'check-on' : ''}}">{{item.selected ? '✓' : ''}}</view>
+                    <view class="rec-main">
+                        <text class="rec-name">{{item.word}}</text>
+                        <text class="rec-sub">{{item.meaning || '暂无释义'}}</text>
+                    </view>
+                    <text class="rec-badge {{item.status === 'mastered' ? 'badge-mastered' : 'badge-learning'}}">{{item.status === 'mastered' ? '已掌握' : '学习中'}}</text>
+                </view>
+            </view>
+        </block>
+
+        <block wx:else>
+            <view wx:if="{{questions.length === 0}}" class="empty">
+                <text class="empty-emoji">📝</text>
+                <text class="empty-text">还没有题目作答记录</text>
+                <text class="empty-sub">先去刷题，做过的题会出现在这里</text>
+            </view>
+            <view wx:else class="rec-list">
+                <view class="rec-row {{item.selected ? 'rec-selected' : ''}}" wx:for="{{questions}}" wx:key="question_id" data-type="question" data-index="{{index}}" bindtap="toggleItem">
+                    <view class="check {{item.selected ? 'check-on' : ''}}">{{item.selected ? '✓' : ''}}</view>
+                    <view class="rec-main">
+                        <text class="rec-name">{{item.stem}}</text>
+                        <text class="rec-sub">做过 {{item.times}} 次 · 答对 {{item.correct_count}} 次</text>
+                    </view>
+                    <text class="rec-badge {{item.last_result === 'wrong' ? 'badge-wrong' : 'badge-learning'}}">{{item.last_result === 'wrong' ? '上次做错' : '上次做对'}}</text>
+                </view>
+            </view>
+        </block>
+    </view>
+</view>

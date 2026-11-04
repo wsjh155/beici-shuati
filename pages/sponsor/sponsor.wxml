@@ -1,0 +1,19 @@
+<view class="page">
+    <view class="hero">
+        <text class="hero-title">赞助支持</text>
+        <text class="hero-sub">如果这个小程序帮到了你，欢迎请我喝杯奶茶 ❤️</text>
+    </view>
+
+    <view class="qr-block">
+        <text class="qr-label wechat">微信支付</text>
+        <image class="qr-img" src="/assets/reward-wechat.jpg" mode="widthFix" show-menu-by-longpress />
+    </view>
+
+    <view class="qr-block">
+        <text class="qr-label alipay">支付宝</text>
+        <image class="qr-img" src="/assets/reward-alipay.jpg" mode="widthFix" show-menu-by-longpress />
+    </view>
+
+    <text class="tip">长按二维码可识别 / 保存到相册</text>
+    <text class="thanks">感谢每一份支持，都会用在继续打磨这个工具上 🙏</text>
+</view>

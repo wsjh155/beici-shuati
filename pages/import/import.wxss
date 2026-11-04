@@ -1,0 +1,155 @@
+.page {
+    box-sizing: border-box;
+    min-height: 100vh;
+    padding: 24rpx 32rpx 48rpx;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-bar {
+    display: flex;
+    padding: 8rpx;
+    border-radius: 20rpx;
+    background: #eef1f6;
+}
+
+.tab-item {
+    flex: 1;
+    height: 76rpx;
+    line-height: 76rpx;
+    font-size: 28rpx;
+    color: #8a94a6;
+    text-align: center;
+    border-radius: 16rpx;
+}
+
+.tab-active {
+    color: #3b6ef5;
+    background: #ffffff;
+    font-weight: 600;
+}
+
+.panel {
+    margin-top: 32rpx;
+    padding: 32rpx;
+    border-radius: 24rpx;
+    background: #ffffff;
+    box-shadow: 0 4rpx 16rpx rgba(31, 35, 41, 0.04);
+}
+
+.field-label {
+    display: block;
+    margin-bottom: 16rpx;
+    font-size: 26rpx;
+    color: #8a94a6;
+}
+
+.picker-value {
+    height: 84rpx;
+    line-height: 84rpx;
+    padding: 0 24rpx;
+    font-size: 28rpx;
+    color: #1f2329;
+    background: #f4f6fb;
+    border-radius: 16rpx;
+}
+
+.input {
+    height: 84rpx;
+    padding: 0 24rpx;
+    margin-top: 20rpx;
+    font-size: 28rpx;
+    background: #f4f6fb;
+    border-radius: 16rpx;
+}
+
+.type-row {
+    display: flex;
+}
+
+.type-btn {
+    flex: 1;
+    height: 76rpx;
+    line-height: 76rpx;
+    font-size: 28rpx;
+    color: #8a94a6;
+    text-align: center;
+    background: #f4f6fb;
+    border-radius: 16rpx;
+}
+
+.type-btn + .type-btn {
+    margin-left: 20rpx;
+}
+
+.type-active {
+    color: #ffffff;
+    background: #3b6ef5;
+    font-weight: 600;
+}
+
+.scan-entry {
+    margin-top: 24rpx;
+    height: 88rpx;
+    line-height: 88rpx;
+    font-size: 28rpx;
+    font-weight: 600;
+    color: #ffffff;
+    background: #17a673;
+    border-radius: 44rpx;
+}
+
+.textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 320rpx;
+    padding: 24rpx;
+    margin-top: 20rpx;
+    font-size: 26rpx;
+    line-height: 1.6;
+    background: #f4f6fb;
+    border-radius: 16rpx;
+}
+
+.preview-count {
+    display: block;
+    margin-top: 16rpx;
+    font-size: 24rpx;
+    color: #17a673;
+}
+
+.import-btn {
+    margin-top: 32rpx;
+    height: 88rpx;
+    line-height: 88rpx;
+    font-size: 30rpx;
+    font-weight: 600;
+    color: #ffffff;
+    background: #3b6ef5;
+    border-radius: 44rpx;
+}
+
+.tips {
+    margin-top: 32rpx;
+    padding: 28rpx;
+    border-radius: 24rpx;
+    background: #fdf6e3;
+}
+
+.tips-title {
+    display: block;
+    font-size: 28rpx;
+    font-weight: 600;
+    color: #8a6116;
+}
+
+.tips-line {
+    display: block;
+    margin-top: 12rpx;
+    font-size: 24rpx;
+    line-height: 1.6;
+    color: #a07c2f;
+}

@@ -1,0 +1,70 @@
+page {
+    min-height: 100%;
+    background: #f5f7fa;
+    color: #1f2329;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+}
+
+button {
+    /* 统一重置原生 button 默认内边距，并用 flex 居中文字，
+       避免不同机型/基础库下文字基线偏移、看起来“歪”的问题 */
+    padding: 0;
+    margin: 0;
+    line-height: normal;
+    border-radius: 12rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+button::after {
+    border: none;
+}
+
+/* 通用加载态 */
+.spinner {
+    width: 44rpx;
+    height: 44rpx;
+    border: 6rpx solid #dbe4f5;
+    border-top-color: #3b6ef5;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.state-box {
+    display: flex;
+    min-height: 60vh;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48rpx;
+}
+
+.state-text {
+    margin-top: 24rpx;
+    font-size: 26rpx;
+    color: #8a94a6;
+}
+
+/* 通用文字色 */
+.text-muted {
+    color: #8a94a6;
+}
+
+.text-primary {
+    color: #3b6ef5;
+}
+
+.text-danger {
+    color: #e5484d;
+}
+
+.text-success {
+    color: #17a673;
+}

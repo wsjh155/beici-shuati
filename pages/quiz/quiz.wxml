@@ -1,0 +1,73 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:else class="content">
+        <view class="hero">
+            <text class="hero-title">当前刷题计划</text>
+            <text class="hero-sub">按每日题量练习总计划里的题目</text>
+        </view>
+
+        <view class="qp-card">
+            <view class="qp-info">
+                <text class="qp-title">今日刷题</text>
+                <text class="qp-desc">已完成 {{todayDone}} / {{dailyQuestions}} 题</text>
+            </view>
+            <button class="qp-btn" bindtap="goStart">开始刷题</button>
+        </view>
+
+        <view class="stat-card">
+            <view class="stat-cell">
+                <text class="stat-num">{{planTotal}}</text>
+                <text class="stat-label">总计划</text>
+            </view>
+            <view class="stat-cell">
+                <text class="stat-num">{{planDone}}</text>
+                <text class="stat-label">已做</text>
+            </view>
+        </view>
+
+        <view class="entry-list">
+            <view class="entry" bindtap="goPresetBank">
+                <text class="entry-emoji">🗂️</text>
+                <text class="entry-text">添加题库（订阅后自动进计划）</text>
+                <text class="entry-arrow">›</text>
+            </view>
+            <view class="entry" bindtap="goPlan">
+                <text class="entry-emoji">🗓️</text>
+                <text class="entry-text">刷题计划设置</text>
+                <text class="entry-arrow">›</text>
+            </view>
+            <view class="entry" bindtap="goRecords">
+                <text class="entry-emoji">🌟</text>
+                <text class="entry-text">学习记录（可删除重做）</text>
+                <text class="entry-arrow">›</text>
+            </view>
+            <view class="entry" bindtap="openCreate">
+                <text class="entry-emoji">➕</text>
+                <text class="entry-text">新建题库</text>
+                <text class="entry-arrow">›</text>
+            </view>
+            <view class="entry" bindtap="goImport">
+                <text class="entry-emoji">📥</text>
+                <text class="entry-text">导入题目</text>
+                <text class="entry-arrow">›</text>
+            </view>
+        </view>
+    </view>
+
+    <view wx:if="{{showCreate}}" class="mask" bindtap="closeCreate">
+        <view class="sheet" catchtap="noop">
+            <text class="sheet-title">新建题库</text>
+            <input class="sheet-input" placeholder="名称（必填）" value="{{formName}}" bindinput="onNameInput" />
+            <input class="sheet-input" placeholder="简介（可选）" value="{{formDesc}}" bindinput="onDescInput" />
+            <button class="sheet-btn" loading="{{saving}}" disabled="{{saving}}" bindtap="submitCreate">保存</button>
+        </view>
+    </view>
+</view>

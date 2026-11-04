@@ -1,0 +1,35 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:else class="content">
+        <view class="header">
+            <text class="title">预设题库</text>
+            <text class="subtitle">一键订阅，加入你的题库开始刷题</text>
+        </view>
+
+        <view wx:if="{{groups.length === 0 && !loading}}" class="empty">
+            <text class="empty-emoji">📭</text>
+            <text class="empty-text">暂无预设题库</text>
+        </view>
+
+        <view class="group" wx:for="{{groups}}" wx:key="category" wx:for-item="g">
+            <text class="group-title">{{g.category}}</text>
+            <view class="bank-item" wx:for="{{g.banks}}" wx:key="id" wx:for-item="bank">
+                <view class="bank-info">
+                    <text class="bank-name">{{bank.name}}</text>
+                    <text class="bank-desc">{{bank.description}}</text>
+                    <text class="bank-count">{{bank.question_count}} 题</text>
+                </view>
+                <button wx:if="{{bank.subscribed}}" class="btn-subscribed" disabled>已订阅</button>
+                <button wx:else class="btn-subscribe" data-id="{{bank.id}}" loading="{{subscribingId === bank.id}}" bindtap="onSubscribe">订阅</button>
+            </view>
+        </view>
+    </view>
+</view>

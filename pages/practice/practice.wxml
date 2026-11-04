@@ -1,0 +1,85 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:elif="{{loading}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{questions.length === 0}}" class="state-box">
+        <text class="empty-emoji">📭</text>
+        <text class="empty-text">{{mode === 'planPool' ? '总计划里还没有题目' : (mode === 'plan' ? '今日刷题计划已完成' : ((idsStr || mode === 'redo') ? '没有可重做的题目' : '这个题库还没有题目'))}}</text>
+        <text class="empty-sub">{{mode === 'planPool' ? '去「题库总览」勾选题目加入总计划' : (mode === 'plan' ? '可在「背词计划」调整每日题量' : ((idsStr || mode === 'redo') ? '先去刷题吧' : '可前往「导入内容」添加题目'))}}</text>
+        <button class="back-btn" bindtap="goBack">返回</button>
+    </view>
+
+    <view wx:elif="{{done}}" class="state-box">
+        <text class="empty-emoji">🏆</text>
+        <text class="empty-text">练习完成！</text>
+        <text class="score-num">{{finalScore}}</text>
+        <text class="empty-sub">共 {{finalTotal}} 题，答对 {{finalCorrect}} 题</text>
+        <button class="back-btn" bindtap="goBack">完成</button>
+    </view>
+
+    <view wx:else class="practice">
+        <view class="progress-row">
+            <text class="progress-text">{{index + 1}} / {{questions.length}}</text>
+            <view class="tag-wrap">
+                <text class="type-tag">{{current.type === 'multiple' ? '多选题' : (current.type === 'judge' ? '判断题' : (current.type === 'subjective' ? '简答题' : '单选题'))}}</text>
+                <text class="ai-badge" wx:if="{{current.ai_generated}}">AI生成</text>
+            </view>
+        </view>
+
+        <view class="stem">{{current.stem}}</view>
+
+        <!-- 选择题 / 判断题 -->
+        <view wx:if="{{current.type !== 'subjective'}}" class="options">
+            <view
+                wx:for="{{current.options}}"
+                wx:key="label"
+                class="option {{item.correct ? 'option-right' : ''}} {{item.wrong ? 'option-wrong' : ''}} {{item.selected && !submitted ? 'option-selected' : ''}}"
+                data-idx="{{index}}"
+                bindtap="onOptionTap"
+            >
+                <text class="option-label">{{item.label}}</text>
+                <text class="option-text">{{item.text}}</text>
+            </view>
+        </view>
+
+        <view wx:if="{{current.type === 'multiple' && !submitted}}" class="submit-bar">
+            <button class="submit-btn" bindtap="submit">确认答案</button>
+        </view>
+
+        <view wx:if="{{submitted && current.type !== 'subjective'}}" class="feedback">
+            <text class="feedback-title {{correct ? 'fb-right' : 'fb-wrong'}}">{{correct ? '✓ 回答正确' : '✗ 回答错误'}}</text>
+            <text class="feedback-answer">正确答案：{{current.answer}}</text>
+            <text class="feedback-analysis" wx:if="{{current.analysis}}">{{current.analysis}}</text>
+            <button class="next-btn" bindtap="next">下一题</button>
+        </view>
+
+        <!-- 简答题 -->
+        <view wx:if="{{current.type === 'subjective'}}" class="subjective">
+            <view wx:if="{{!reveal}}" class="reveal-bar">
+                <text class="reveal-hint">先在脑海中回忆答案，再翻卡核对</text>
+                <button class="reveal-btn" bindtap="revealAnswer">显示答案</button>
+            </view>
+            <view wx:else class="subjective-answer">
+                <text class="subjective-answer-label">参考答案</text>
+                <text class="subjective-answer-text">{{current.answer}}</text>
+                <text class="subjective-analysis" wx:if="{{current.analysis}}">{{current.analysis}}</text>
+                <view class="grade-row">
+                    <button class="grade-btn grade-wrong" data-grade="wrong" bindtap="selfGrade">✗ 做错了</button>
+                    <button class="grade-btn grade-partial" data-grade="partial" bindtap="selfGrade">🤔 有思路</button>
+                    <button class="grade-btn grade-right" data-grade="right" bindtap="selfGrade">✓ 做对了</button>
+                </view>
+            </view>
+        </view>
+    </view>
+</view>

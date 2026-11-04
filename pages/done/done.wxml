@@ -1,0 +1,38 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:elif="{{loading}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:else class="content">
+        <view class="toolbar" wx:if="{{total > 0}}">
+            <text class="total-text">共 {{total}} 道做过的题</text>
+            <button class="redo-all-btn" bindtap="addAllToPlan">加入总计划</button>
+        </view>
+
+        <view wx:if="{{total === 0}}" class="empty">
+            <text class="empty-emoji">📝</text>
+            <text class="empty-text">还没有做过的题</text>
+            <text class="empty-sub">先去刷题，做过的题会出现在这里</text>
+        </view>
+
+        <view wx:else class="done-list">
+            <view class="done-row" wx:for="{{list}}" wx:key="question_id" data-id="{{item.question_id}}" bindtap="addOneToPlan">
+                <view class="done-main">
+                    <text class="done-stem">{{item.stem}}</text>
+                    <text class="done-meta">做过 {{item.times}} 次 · 答对 {{item.correct_count}} 次</text>
+                </view>
+                <text class="done-badge {{item.last_result === 'wrong' ? 'badge-wrong' : 'badge-right'}}">{{item.last_result === 'wrong' ? '上次做错' : '上次做对'}}</text>
+            </view>
+        </view>
+    </view>
+</view>

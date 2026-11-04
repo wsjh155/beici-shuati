@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "刷题",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}

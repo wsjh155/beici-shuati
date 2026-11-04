@@ -1,0 +1,67 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:else class="content">
+        <view class="tab-bar">
+            <view class="tab-item {{tab === 'words' ? 'tab-active' : ''}}" data-tab="words" bindtap="switchTab">导入单词</view>
+            <view class="tab-item {{tab === 'questions' ? 'tab-active' : ''}}" data-tab="questions" bindtap="switchTab">导入题目</view>
+        </view>
+
+        <!-- 导入单词 -->
+        <view wx:if="{{tab === 'words'}}" class="panel">
+            <text class="field-label">目标单词本</text>
+            <picker mode="selector" range="{{bookNames}}" value="{{bookIndex}}" bindchange="onBookChange">
+                <view class="picker-value">{{bookNames[bookIndex]}} ▾</view>
+            </picker>
+            <input wx:if="{{bookIndex === 0}}" class="input" placeholder="新单词本名称" value="{{newBookName}}" bindinput="onNewBookInput" />
+
+            <text class="field-label">粘贴单词内容</text>
+            <textarea class="textarea" placeholder="每行一个单词，用 | 或 Tab 分隔&#10;格式：单词 | 音标 | 释义 | 例句&#10;例如：apple | ˈæpl | 苹果 | I ate an apple." value="{{wordText}}" bindinput="onWordTextInput" maxlength="50000" />
+            <text class="preview-count" wx:if="{{wordCount > 0}}">已识别 {{wordCount}} 个单词</text>
+
+            <button class="import-btn" loading="{{importing}}" disabled="{{importing}}" bindtap="doImportWords">导入单词</button>
+        </view>
+
+        <!-- 导入题目 -->
+        <view wx:else class="panel">
+            <text class="field-label">题型</text>
+            <view class="type-row">
+                <view class="type-btn {{qType === 'choice' ? 'type-active' : ''}}" data-type="choice" bindtap="onQTypeTap">选择题</view>
+                <view class="type-btn {{qType === 'judge' ? 'type-active' : ''}}" data-type="judge" bindtap="onQTypeTap">判断题</view>
+                <view class="type-btn {{qType === 'subjective' ? 'type-active' : ''}}" data-type="subjective" bindtap="onQTypeTap">简答题</view>
+            </view>
+
+            <button class="scan-entry" bindtap="goScan">📷 拍照识别题目</button>
+
+            <text class="field-label">目标题库</text>
+            <picker mode="selector" range="{{bankNames}}" value="{{bankIndex}}" bindchange="onBankChange">
+                <view class="picker-value">{{bankNames[bankIndex]}} ▾</view>
+            </picker>
+            <input wx:if="{{bankIndex === 0}}" class="input" placeholder="新题库名称" value="{{newBankName}}" bindinput="onNewBankInput" />
+
+            <text class="field-label">粘贴题目内容</text>
+            <textarea wx:if="{{qType === 'choice'}}" class="textarea" placeholder="每行一题，用 | 或 Tab 分隔&#10;题干 | 选项A | 选项B | 选项C | 选项D | 答案 | 解析&#10;答案填字母，多选填如 ABD，解析可空" value="{{questionText}}" bindinput="onQuestionTextInput" maxlength="50000" />
+            <textarea wx:elif="{{qType === 'judge'}}" class="textarea" placeholder="每行一题，用 | 或 Tab 分隔&#10;题干 | 对/错 | 解析&#10;例如：地球是圆的 | 对 | 地球近似球体" value="{{questionText}}" bindinput="onQuestionTextInput" maxlength="50000" />
+            <textarea wx:else class="textarea" placeholder="每行一题，用 | 或 Tab 分隔&#10;题干 | 参考答案(释义) | 解析&#10;例如：apple | 苹果 | 一种水果" value="{{questionText}}" bindinput="onQuestionTextInput" maxlength="50000" />
+            <text class="preview-count" wx:if="{{questionCount > 0}}">已识别 {{questionCount}} 道题</text>
+
+            <button class="import-btn" loading="{{importing}}" disabled="{{importing}}" bindtap="doImportQuestions">导入题目</button>
+        </view>
+
+        <view class="tips">
+            <text class="tips-title">格式说明</text>
+            <text class="tips-line">· 分隔符支持竖线「|」或制表符（从 Excel 直接复制即可）</text>
+            <text class="tips-line">· 单词：单词 | 音标 | 释义 | 例句（音标、例句可省略）</text>
+            <text class="tips-line">· 选择题：题干 | 选项A | 选项B | 选项C | 选项D | 答案 | 解析</text>
+            <text class="tips-line">· 判断题：题干 | 对/错 | 解析</text>
+            <text class="tips-line">· 简答题：题干 | 参考答案 | 解析（作答后自己判分：做对了 / 有思路 / 做错了）</text>
+        </view>
+    </view>
+</view>

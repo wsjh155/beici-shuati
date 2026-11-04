@@ -1,0 +1,56 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/words/words",
+    "pages/quiz/quiz",
+    "pages/profile/profile",
+    "pages/study/study",
+    "pages/practice/practice",
+    "pages/wrong/wrong",
+    "pages/stats/stats",
+    "pages/learned/learned",
+    "pages/done/done",
+    "pages/import/import",
+    "pages/scan/scan",
+    "pages/preset/preset",
+    "pages/preset-bank/preset-bank",
+    "pages/plan/plan",
+    "pages/tutorial/tutorial",
+    "pages/sponsor/sponsor",
+    "pages/about/about"
+  ],
+  "window": {
+    "navigationBarTitleText": "背词刷题",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f5f7fa",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#8a94a6",
+    "selectedColor": "#3b6ef5",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/words/words",
+        "text": "单词"
+      },
+      {
+        "pagePath": "pages/quiz/quiz",
+        "text": "刷题"
+      },
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

@@ -1,0 +1,61 @@
+.login-panel {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 80rpx 48rpx;
+}
+
+.login-panel-logo {
+    display: flex;
+    width: 128rpx;
+    height: 128rpx;
+    align-items: center;
+    justify-content: center;
+    border-radius: 32rpx;
+    background: #3b6ef5;
+    color: #ffffff;
+    font-size: 64rpx;
+    font-weight: 700;
+}
+
+.login-panel-title {
+    margin-top: 32rpx;
+    font-size: 40rpx;
+    font-weight: 700;
+    color: #1f2329;
+}
+
+.login-panel-desc {
+    margin-top: 20rpx;
+    max-width: 520rpx;
+    font-size: 26rpx;
+    line-height: 1.7;
+    text-align: center;
+    color: #8a94a6;
+}
+
+.login-panel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 64rpx;
+    width: 520rpx;
+    height: 88rpx;
+    padding: 0;
+    line-height: 1;
+    font-size: 30rpx;
+    font-weight: 600;
+    color: #ffffff;
+    background: #3b6ef5;
+    border-radius: 44rpx;
+}
+
+.login-panel-btn::after {
+    border: none;
+}
+
+.login-panel-error {
+    margin-top: 24rpx;
+    font-size: 24rpx;
+    color: #e5484d;
+}

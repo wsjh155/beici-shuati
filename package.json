@@ -1,0 +1,9 @@
+{
+  "name": "vocab-quiz-miniprogram",
+  "version": "1.0.0",
+  "description": "背单词与刷题微信小程序",
+  "private": true,
+  "dependencies": {
+    "@tencent-ai/workbuddy-cloud-sdk": "^0.1.4-dev.ca27990.202610161713"
+  }
+}

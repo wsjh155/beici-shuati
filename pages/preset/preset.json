@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "预设词库",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}

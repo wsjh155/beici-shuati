@@ -1,0 +1,45 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:else class="content">
+        <view class="hero">
+            <text class="hero-title">今天也要加油呀 💪</text>
+            <text class="hero-sub">坚持复习，单词记得更牢</text>
+        </view>
+
+        <view class="overview">
+            <view class="overview-card" bindtap="goDue">
+                <text class="overview-num">{{dueCount}}</text>
+                <text class="overview-label">今日待复习</text>
+            </view>
+            <view class="overview-card" bindtap="goNew">
+                <text class="overview-num">{{newCount}}</text>
+                <text class="overview-label">待学习新词</text>
+            </view>
+        </view>
+
+        <view class="plan-card" bindtap="goStartPlan">
+            <view class="plan-info">
+                <text class="plan-title">今日计划</text>
+                <text class="plan-desc">新词 {{planNew}} 个 · 复习 {{planReview}} 个</text>
+            </view>
+            <text class="plan-go">{{planNew + planReview > 0 ? '开始学习 ›' : '已完成'}}</text>
+        </view>
+
+        <text class="section-title">快捷入口</text>
+        <view class="menu-grid">
+            <view class="menu-item" wx:for="{{menus}}" wx:key="key" data-path="{{item.path}}" data-tab="{{item.tab}}" bindtap="onMenuTap">
+                <text class="menu-emoji">{{item.emoji}}</text>
+                <text class="menu-text">{{item.text}}</text>
+                <text class="menu-desc">{{item.desc}}</text>
+            </view>
+        </view>
+    </view>
+</view>

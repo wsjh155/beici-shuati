@@ -1,0 +1,111 @@
+.page {
+    box-sizing: border-box;
+    min-height: 100vh;
+    padding: 24rpx 32rpx 48rpx;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20rpx;
+}
+
+.total-text {
+    font-size: 26rpx;
+    color: #8a94a6;
+}
+
+.redo-all-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64rpx;
+    padding: 0 28rpx;
+    line-height: 1;
+    font-size: 26rpx;
+    font-weight: 600;
+    color: #ffffff;
+    background: #3b6ef5;
+    border-radius: 32rpx;
+}
+
+.empty {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 96rpx 0;
+}
+
+.empty-emoji {
+    font-size: 72rpx;
+}
+
+.empty-text {
+    margin-top: 24rpx;
+    font-size: 30rpx;
+    color: #1f2329;
+}
+
+.empty-sub {
+    margin-top: 12rpx;
+    font-size: 24rpx;
+    color: #8a94a6;
+}
+
+.done-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.done-row {
+    display: flex;
+    align-items: center;
+    padding: 24rpx;
+    margin-bottom: 16rpx;
+    border-radius: 20rpx;
+    background: #ffffff;
+    box-shadow: 0 4rpx 12rpx rgba(31, 35, 41, 0.04);
+}
+
+.done-main {
+    flex: 1;
+    overflow: hidden;
+}
+
+.done-stem {
+    display: block;
+    font-size: 28rpx;
+    color: #1f2329;
+    line-height: 1.5;
+}
+
+.done-meta {
+    display: block;
+    margin-top: 8rpx;
+    font-size: 22rpx;
+    color: #8a94a6;
+}
+
+.done-badge {
+    flex-shrink: 0;
+    margin-left: 16rpx;
+    padding: 6rpx 18rpx;
+    border-radius: 20rpx;
+    font-size: 22rpx;
+}
+
+.badge-wrong {
+    color: #e5484d;
+    background: #fdecec;
+}
+
+.badge-right {
+    color: #17a673;
+    background: #e7f7f0;
+}

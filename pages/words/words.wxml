@@ -1,0 +1,87 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:else class="content">
+        <view class="hero">
+            <text class="hero-title">当前学习计划</text>
+            <text class="hero-sub">按每日计划学习总计划里的单词</text>
+        </view>
+
+        <view class="plan-card">
+            <view class="plan-row">
+                <view class="plan-item">
+                    <text class="plan-num">{{planNew}}</text>
+                    <text class="plan-label">今日新词</text>
+                </view>
+                <view class="plan-item">
+                    <text class="plan-num">{{planReview}}</text>
+                    <text class="plan-label">今日复习</text>
+                </view>
+            </view>
+            <button class="start-btn" bindtap="goStart">▶ 开始学习</button>
+        </view>
+
+        <view class="stat-card">
+            <view class="stat-cell">
+                <text class="stat-num">{{total}}</text>
+                <text class="stat-label">总计划</text>
+            </view>
+            <view class="stat-cell">
+                <text class="stat-num">{{fresh}}</text>
+                <text class="stat-label">待学</text>
+            </view>
+            <view class="stat-cell">
+                <text class="stat-num">{{learning}}</text>
+                <text class="stat-label">学习中</text>
+            </view>
+            <view class="stat-cell">
+                <text class="stat-num">{{mastered}}</text>
+                <text class="stat-label">已掌握</text>
+            </view>
+        </view>
+
+        <view class="entry-list">
+            <view class="entry" bindtap="goPreset">
+                <text class="entry-emoji">📚</text>
+                <text class="entry-text">添加词库（订阅后自动进计划）</text>
+                <text class="entry-arrow">›</text>
+            </view>
+            <view class="entry" bindtap="goPlan">
+                <text class="entry-emoji">🗓️</text>
+                <text class="entry-text">背词计划设置</text>
+                <text class="entry-arrow">›</text>
+            </view>
+            <view class="entry" bindtap="goRecords">
+                <text class="entry-emoji">🌟</text>
+                <text class="entry-text">学习记录（可删除重学）</text>
+                <text class="entry-arrow">›</text>
+            </view>
+            <view class="entry" bindtap="openCreate">
+                <text class="entry-emoji">➕</text>
+                <text class="entry-text">新建单词本</text>
+                <text class="entry-arrow">›</text>
+            </view>
+            <view class="entry" bindtap="goImport">
+                <text class="entry-emoji">📥</text>
+                <text class="entry-text">导入单词</text>
+                <text class="entry-arrow">›</text>
+            </view>
+        </view>
+    </view>
+
+    <view wx:if="{{showCreate}}" class="mask" bindtap="closeCreate">
+        <view class="sheet" catchtap="noop">
+            <text class="sheet-title">新建单词本</text>
+            <input class="sheet-input" placeholder="名称（必填）" value="{{formName}}" bindinput="onNameInput" />
+            <input class="sheet-input" placeholder="简介（可选）" value="{{formDesc}}" bindinput="onDescInput" />
+            <button class="sheet-btn" loading="{{saving}}" disabled="{{saving}}" bindtap="submitCreate">保存</button>
+        </view>
+    </view>
+</view>

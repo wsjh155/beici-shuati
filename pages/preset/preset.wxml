@@ -1,0 +1,36 @@
+<view class="page">
+    <view wx:if="{{authState === 'checking'}}" class="state-box">
+        <view class="spinner"></view>
+        <text class="state-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{authState === 'signed-out'}}">
+        <login-panel bind:signedin="onSignedIn" />
+    </view>
+
+    <view wx:else class="content">
+        <view class="header">
+            <text class="title">预设词库</text>
+            <text class="subtitle">点击「订阅」把词库加入我的单词本开始学习，也可直接点词库背诵</text>
+        </view>
+
+        <view wx:if="{{series.length === 0 && !loading}}" class="empty">
+            <text class="empty-emoji">📚</text>
+            <text class="empty-text">暂无词库</text>
+        </view>
+
+        <view class="series" wx:for="{{series}}" wx:key="id" wx:for-item="s">
+            <text class="series-title">{{s.name}}</text>
+            <view class="lib-row">
+                <view class="lib-item" wx:for="{{s.libraries}}" wx:key="id" wx:for-item="lib">
+                    <view class="lib-info" bindtap="goStudy" data-id="{{lib.id}}">
+                        <text class="lib-name">{{lib.kind === 'full' ? '完整词库' : '高频词库'}}</text>
+                        <text class="lib-count">{{lib.word_count}} 词</text>
+                    </view>
+                    <button wx:if="{{lib.subscribed}}" class="lib-subscribe subscribed" disabled>已订阅</button>
+                    <button wx:else class="lib-subscribe" data-id="{{lib.id}}" loading="{{subscribingId === lib.id}}" catchtap="onSubscribe">订阅</button>
+                </view>
+            </view>
+        </view>
+    </view>
+</view>

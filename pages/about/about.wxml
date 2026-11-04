@@ -1,0 +1,33 @@
+<view class="page">
+    <view class="logo">词</view>
+    <text class="app-name">背词刷题</text>
+    <text class="app-version">Version {{version}}</text>
+
+    <view class="card">
+        <text class="card-title">它是做什么的</text>
+        <text class="card-text">一个专注「背单词 + 刷题」的学习工具：内置中考 / 高考 / 四级 / 六级 / 考研 / 雅思 六个等级的官方词库，配合艾宾浩斯遗忘曲线安排复习，并支持题库练习与错题回顾。</text>
+    </view>
+
+    <view class="card">
+        <text class="card-title">主要功能</text>
+        <text class="card-text">• 六大等级词库，完整词库 / 高频词库自由订阅</text>
+        <text class="card-text">• 每日学习计划：新词、复习、刷题分开管理</text>
+        <text class="card-text">• 总计划池：把想学的单词、题目加入总计划统一推进</text>
+        <text class="card-text">• 学习记录：随时查看与批量清除记录，支持重学</text>
+        <text class="card-text">• 数据云同步，换设备不丢失</text>
+    </view>
+
+    <view class="card">
+        <text class="card-title">说明</text>
+        <text class="card-text">词库与题目仅供学习参考，释义与解析如有个别偏差，欢迎反馈指正。本小程序免费使用。</text>
+    </view>
+
+    <view class="card">
+        <text class="card-title">开源地址</text>
+        <text class="card-text">本项目已开源，欢迎 Star、提 Issue 一起完善：</text>
+        <text class="link" bindtap="copyLink">{{githubUrl}}</text>
+        <text class="copy-hint">点击链接可复制</text>
+    </view>
+
+    <text class="footer">用心做好每一个背单词的日子 ✨</text>
+</view>

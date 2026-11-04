@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "背单词",
+  "usingComponents": {
+    "login-panel": "../../components/login-panel/login-panel"
+  }
+}
