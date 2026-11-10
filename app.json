@@ -18,7 +18,6 @@
     "pages/upload/upload",
     "pages/plan/plan",
     "pages/tutorial/tutorial",
-    "pages/sponsor/sponsor",
     "pages/about/about"
   ],
   "window": {

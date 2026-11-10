@@ -27,7 +27,6 @@
 
 ```
 ├── app.js / app.json / app.wxss     # 小程序入口与全局配置
-├── assets/                          # 图片资源（含作者收款码，二次部署请替换）
 ├── components/login-panel/          # 微信登录组件
 ├── pages/                           # 页面
 │   ├── words/ quiz/ index/ profile/ # 底部四个标签
@@ -37,7 +36,7 @@
 │   ├── plan/                        # 背词 / 刷题计划
 │   ├── learned/                     # 学习记录
 │   ├── stats/ wrong/                # 统计 / 错题
-│   ├── tutorial/ sponsor/ about/    # 新手教程 / 赞助 / 关于
+│   ├── tutorial/ about/             # 新手教程 / 关于
 │   └── import/ scan/                # 导入 / 拍照识别
 └── utils/                           # 数据访问层与工具
 ```
@@ -51,7 +50,6 @@
 
 ## 说明
 
-- `assets/reward-*.jpg` 为作者个人收款码，**二次部署请替换为你的或直接删除**，并同步修改「我的 → 赞助支持」页面。
 - 词库与题目仅供学习参考，释义与解析如有个别偏差，欢迎提 Issue 指正。
 
 ## License
