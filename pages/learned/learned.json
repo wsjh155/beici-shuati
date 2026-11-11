@@ -1,6 +1,6 @@
 {
   "navigationBarTitleText": "学习记录",
   "usingComponents": {
-    "login-panel": "../../components/login-panel/login-panel"
+    "guest-gate": "../../components/guest-gate/guest-gate"
   }
 }

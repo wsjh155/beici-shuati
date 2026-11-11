@@ -33,6 +33,14 @@ Page({
         this.restore();
     },
 
+    // 用户主动点击才打开登录弹层，弹层内可随时「暂不登录」
+    onOpenLogin() {
+        const gate = this.selectComponent('#guestGate');
+        if (gate) {
+            gate.open();
+        }
+    },
+
     onMenuTap(e) {
         const path = e.currentTarget.dataset.path;
         if (path) {

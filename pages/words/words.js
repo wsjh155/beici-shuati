@@ -1,4 +1,4 @@
-const { ensureSession } = require('../../utils/auth');
+const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 
 Page({
@@ -65,6 +65,9 @@ Page({
 
     // 乱序 / 顺序切换（立即保存）
     async onOrderTap(e) {
+        if (!requireLogin(this)) {
+            return;
+        }
         const mode = e.currentTarget.dataset.mode === 'order' ? 'order' : 'random';
         if (mode === this.data.orderMode) {
             return;
@@ -118,6 +121,9 @@ Page({
     noop() {},
 
     async submitCreate() {
+        if (!requireLogin(this)) {
+            return;
+        }
         const name = (this.data.formName || '').trim();
         if (!name) {
             wx.showToast({ title: '请输入名称', icon: 'none' });

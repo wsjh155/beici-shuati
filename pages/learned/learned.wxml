@@ -1,11 +1,8 @@
 <view class="page">
+    <guest-gate id="guestGate" wx:if="{{authState === 'signed-out'}}" bind:signedin="onSignedIn" />
     <view wx:if="{{authState === 'checking'}}" class="state-box">
         <view class="spinner"></view>
         <text class="state-text">加载中...</text>
-    </view>
-
-    <view wx:elif="{{authState === 'signed-out'}}">
-        <login-panel bind:signedin="onSignedIn" />
     </view>
 
     <view wx:elif="{{loading}}" class="state-box">

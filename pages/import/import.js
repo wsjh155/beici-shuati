@@ -1,4 +1,4 @@
-const { ensureSession } = require('../../utils/auth');
+const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 const { parseWordLines, parseQuestionLines } = require('../../utils/parser');
 
@@ -92,6 +92,9 @@ Page({
     },
 
     async doImportWords() {
+        if (!requireLogin(this)) {
+            return;
+        }
         const text = this.data.wordText.trim();
         if (!text) {
             wx.showToast({ title: '请先粘贴单词内容', icon: 'none' });
@@ -132,6 +135,9 @@ Page({
     },
 
     async doImportQuestions() {
+        if (!requireLogin(this)) {
+            return;
+        }
         const text = this.data.questionText.trim();
         if (!text) {
             wx.showToast({ title: '请先粘贴题目内容', icon: 'none' });

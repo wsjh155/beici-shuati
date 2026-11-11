@@ -1,4 +1,4 @@
-const { ensureSession } = require('../../utils/auth');
+const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 const { parseWordLines, parseQuestionLines } = require('../../utils/parser');
 
@@ -73,6 +73,9 @@ Page({
     },
 
     async submit() {
+        if (!requireLogin(this)) {
+            return;
+        }
         const name = this.data.name.trim();
         const text = this.data.text.trim();
         if (!name) {

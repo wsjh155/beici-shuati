@@ -1,4 +1,4 @@
-const { ensureSession } = require('../../utils/auth');
+const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 const prefs = require('../../utils/prefs');
 
@@ -15,10 +15,8 @@ Page({
     },
 
     async restore() {
-        const session = await ensureSession(this);
-        if (!session) {
-            return;
-        }
+        // 词库列表是公开的，游客也能先了解内容
+        await ensureSession(this);
         this.load();
     },
 
@@ -35,7 +33,7 @@ Page({
             store.listWordbooks(),
             store.getPlanSettings(),
         ]);
-        if (this.data.authState !== 'signed-in') {
+        if (this.data.authState === 'checking') {
             return;
         }
         const globalOrder = settingsResult.data && settingsResult.data.word_order === 'order' ? 'order' : 'random';
@@ -69,6 +67,9 @@ Page({
     },
 
     onSubscribe(e) {
+        if (!requireLogin(this)) {
+            return;
+        }
         const id = e.currentTarget.dataset.id;
         this.setData({ subscribingId: id });
         wx.showModal({

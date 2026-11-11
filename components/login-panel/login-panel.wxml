@@ -1,7 +1,0 @@
-<view class="login-panel">
-    <view class="login-panel-logo">词</view>
-    <text class="login-panel-title">背词刷题</text>
-    <text class="login-panel-desc">登录后，单词记忆进度与题库将自动同步到云端，换设备也不丢失。</text>
-    <button class="login-panel-btn" loading="{{loggingIn}}" disabled="{{loggingIn}}" bindtap="onLogin">微信一键登录</button>
-    <text class="login-panel-error" wx:if="{{error}}">{{error}}</text>
-</view>

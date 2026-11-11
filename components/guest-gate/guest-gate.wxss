@@ -1,0 +1,123 @@
+.guest-tip {
+    display: flex;
+    flex-direction: column;
+    margin: 24rpx 24rpx 0;
+    padding: 28rpx 32rpx;
+    background: #eef3ff;
+    border: 1rpx solid #d6e2ff;
+    border-radius: 20rpx;
+}
+
+.guest-tip-title {
+    font-size: 30rpx;
+    font-weight: 700;
+    color: #1f2329;
+}
+
+.guest-tip-desc {
+    margin-top: 12rpx;
+    font-size: 25rpx;
+    line-height: 1.6;
+    color: #5a6478;
+}
+
+.guest-tip-actions {
+    display: flex;
+    flex-direction: row;
+    margin-top: 24rpx;
+}
+
+.guest-btn {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    height: 68rpx;
+    padding: 0 36rpx;
+    font-size: 27rpx;
+    font-weight: 600;
+    border-radius: 34rpx;
+}
+
+.guest-btn-primary {
+    color: #ffffff;
+    background: #3b6ef5;
+}
+
+.guest-btn-ghost {
+    margin-left: 20rpx;
+    color: #3b6ef5;
+    background: #ffffff;
+    border: 1rpx solid #b9cdff;
+}
+
+.guest-btn-cancel {
+    color: #3b4453;
+    background: #f2f4f8;
+    border: 1rpx solid #d8dde6;
+}
+
+.is-disabled {
+    opacity: 0.6;
+}
+
+.guest-mask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(20, 26, 40, 0.45);
+}
+
+.guest-sheet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 48rpx 40rpx 64rpx;
+    background: #ffffff;
+    border-radius: 32rpx 32rpx 0 0;
+    box-sizing: border-box;
+}
+
+.sheet-title {
+    font-size: 34rpx;
+    font-weight: 700;
+    color: #1f2329;
+}
+
+.sheet-desc {
+    margin-top: 20rpx;
+    font-size: 26rpx;
+    line-height: 1.7;
+    text-align: center;
+    color: #8a94a6;
+}
+
+.sheet-btn {
+    width: 100%;
+    height: 88rpx;
+    margin-top: 24rpx;
+    font-size: 29rpx;
+}
+
+.sheet-error {
+    margin-top: 20rpx;
+    font-size: 24rpx;
+    color: #e5484d;
+}
+
+.sheet-note {
+    margin-top: 24rpx;
+    font-size: 23rpx;
+    color: #a2aab8;
+}
+
+.guest-sheet .guest-btn-ghost {
+    margin-left: 0;
+}

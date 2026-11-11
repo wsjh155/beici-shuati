@@ -1,4 +1,4 @@
-const { ensureSession } = require('../../utils/auth');
+const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 const prefs = require('../../utils/prefs');
 
@@ -146,6 +146,9 @@ Page({
 
     // 顺序切换：kind = word | question（全局默认，立即保存）
     async onOrderTap(e) {
+        if (!requireLogin(this)) {
+            return;
+        }
         const kind = e.currentTarget.dataset.kind === 'question' ? 'question' : 'word';
         const mode = e.currentTarget.dataset.mode === 'order' ? 'order' : 'random';
         const current = kind === 'question' ? this.data.questionOrder : this.data.wordOrder;
@@ -184,6 +187,9 @@ Page({
     },
 
     onLibOrderTap(e) {
+        if (!requireLogin(this)) {
+            return;
+        }
         const id = Number(e.currentTarget.dataset.id);
         const mode = e.currentTarget.dataset.order === 'order' ? 'order' : 'random';
         prefs.setLibraryOrder(id, mode);
@@ -196,6 +202,9 @@ Page({
     },
 
     onBankOrderTap(e) {
+        if (!requireLogin(this)) {
+            return;
+        }
         const id = Number(e.currentTarget.dataset.id);
         const mode = e.currentTarget.dataset.order === 'order' ? 'order' : 'random';
         prefs.setBankOrder(id, mode);
@@ -220,6 +229,9 @@ Page({
     },
 
     async save() {
+        if (!requireLogin(this)) {
+            return;
+        }
         this.setData({ saving: true });
         const r = await store.savePlanSettings({
             daily_new: this.data.dailyNew,

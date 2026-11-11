@@ -1,4 +1,4 @@
-const { ensureSession } = require('../../utils/auth');
+const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 
 // 我的题库 / 词库管理：只看自己的，可单独练习、取消订阅（删除）。
@@ -90,6 +90,9 @@ Page({
 
     // 取消订阅 / 删除：连题目、计划、作答记录一起清理
     onRemove(e) {
+        if (!requireLogin(this)) {
+            return;
+        }
         const id = e.currentTarget.dataset.id;
         const kind = e.currentTarget.dataset.kind;
         const name = e.currentTarget.dataset.name || '这份库';

@@ -1,20 +1,26 @@
 <view class="page">
+    <guest-gate id="guestGate" wx:if="{{authState === 'signed-out'}}" bind:signedin="onSignedIn" />
     <view wx:if="{{authState === 'checking'}}" class="state-box">
         <view class="spinner"></view>
         <text class="state-text">加载中...</text>
     </view>
 
-    <view wx:elif="{{authState === 'signed-out'}}">
-        <login-panel bind:signedin="onSignedIn" />
-    </view>
-
     <view wx:else class="content">
-        <view class="profile-card">
+        <view class="profile-card" wx:if="{{authState === 'signed-in'}}">
             <view class="avatar">{{avatarText}}</view>
             <view class="profile-info">
                 <text class="profile-name">{{userName}}</text>
                 <text class="profile-sub">数据已同步到云端</text>
             </view>
+        </view>
+
+        <view class="profile-card" wx:else>
+            <view class="avatar">游</view>
+            <view class="profile-info">
+                <text class="profile-name">游客模式</text>
+                <text class="profile-sub">可浏览全部功能，登录后才保存个人进度</text>
+            </view>
+            <view class="login-entry" bindtap="onOpenLogin">点击登录</view>
         </view>
 
         <view class="menu-list">
@@ -28,6 +34,6 @@
             </view>
         </view>
 
-        <button class="logout-btn" bindtap="onLogout">退出登录</button>
+        <button wx:if="{{authState === 'signed-in'}}" class="logout-btn" bindtap="onLogout">退出登录</button>
     </view>
 </view>

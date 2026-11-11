@@ -1,4 +1,4 @@
-const { ensureSession } = require('../../utils/auth');
+const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 
 // 订阅中心：官方预设题库 / 官方词库 / 用户共享库，订阅都在这里完成。
@@ -19,11 +19,9 @@ Page({
     },
 
     async restore() {
+        // 游客也能浏览官方预设与共享库，登录只在订阅等写操作时按需引导
         const session = await ensureSession(this);
-        if (!session) {
-            return;
-        }
-        const user = session.user || {};
+        const user = (session && session.user) || {};
         this.setData({ myUid: user.id || user.uid || user.sub || '' });
         this.load();
     },
@@ -43,7 +41,7 @@ Page({
             store.listBanks(),
             store.listSharedLibraries(),
         ]);
-        if (this.data.authState !== 'signed-in') {
+        if (this.data.authState === 'checking') {
             return;
         }
         const seriesMap = {};
@@ -86,6 +84,9 @@ Page({
     },
 
     async subscribe(kind, id) {
+        if (!requireLogin(this)) {
+            return;
+        }
         const key = kind + ':' + id;
         this.setData({ subscribingId: key });
         let r;

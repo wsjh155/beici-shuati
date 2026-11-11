@@ -47,6 +47,21 @@
     opacity: 0.9;
 }
 
+.login-entry {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    height: 64rpx;
+    padding: 0 28rpx;
+    border-radius: 32rpx;
+    background: #ffffff;
+    color: #3b6ef5;
+    font-size: 26rpx;
+    font-weight: 600;
+}
+
 .menu-list {
     margin-top: 32rpx;
     border-radius: 24rpx;

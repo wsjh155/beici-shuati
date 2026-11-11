@@ -1,6 +1,6 @@
 {
   "navigationBarTitleText": "导入内容",
   "usingComponents": {
-    "login-panel": "../../components/login-panel/login-panel"
+    "guest-gate": "../../components/guest-gate/guest-gate"
   }
 }

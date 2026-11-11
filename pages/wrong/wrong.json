@@ -1,6 +1,6 @@
 {
   "navigationBarTitleText": "错题回顾",
   "usingComponents": {
-    "login-panel": "../../components/login-panel/login-panel"
+    "guest-gate": "../../components/guest-gate/guest-gate"
   }
 }

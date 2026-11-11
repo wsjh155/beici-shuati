@@ -1,0 +1,19 @@
+<view class="guest-tip" wx:if="{{!dismissed}}">
+    <text class="guest-tip-title">欢迎体验「背词刷题」</text>
+    <text class="guest-tip-desc">{{tip}}</text>
+    <view class="guest-tip-actions">
+        <view class="guest-btn guest-btn-primary" bindtap="openLogin">登录</view>
+        <view class="guest-btn guest-btn-ghost" bindtap="dismiss">暂不登录</view>
+    </view>
+</view>
+
+<view class="guest-mask" wx:if="{{sheetOpen}}" bindtap="onMaskTap">
+    <view class="guest-sheet" catchtap="noop">
+        <text class="sheet-title">登录以保存学习进度</text>
+        <text class="sheet-desc">登录后，单词记忆进度、题库与刷题记录会同步到云端，换设备也不丢失。不登录也可以继续浏览小程序内容。</text>
+        <view class="guest-btn guest-btn-primary sheet-btn {{loggingIn ? 'is-disabled' : ''}}" bindtap="onLogin">{{loggingIn ? '登录中...' : '微信一键登录'}}</view>
+        <view class="guest-btn guest-btn-cancel sheet-btn" bindtap="closeSheet">暂不登录</view>
+        <text class="sheet-error" wx:if="{{error}}">{{error}}</text>
+        <text class="sheet-note">你可以随时在「我的」页主动登录</text>
+    </view>
+</view>

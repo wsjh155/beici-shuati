@@ -1,6 +1,6 @@
 {
   "navigationBarTitleText": "拍照识别题目",
   "usingComponents": {
-    "login-panel": "../../components/login-panel/login-panel"
+    "guest-gate": "../../components/guest-gate/guest-gate"
   }
 }

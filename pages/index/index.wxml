@@ -1,17 +1,23 @@
 <view class="page">
+    <guest-gate id="guestGate" wx:if="{{authState === 'signed-out'}}" bind:signedin="onSignedIn" />
     <view wx:if="{{authState === 'checking'}}" class="state-box">
         <view class="spinner"></view>
         <text class="state-text">加载中...</text>
-    </view>
-
-    <view wx:elif="{{authState === 'signed-out'}}">
-        <login-panel bind:signedin="onSignedIn" />
     </view>
 
     <view wx:else class="content">
         <view class="hero">
             <text class="hero-title">今天也要加油呀 💪</text>
             <text class="hero-sub">坚持复习，单词记得更牢</text>
+        </view>
+
+        <view wx:if="{{authState === 'signed-out'}}" class="intro-card">
+            <text class="intro-title">背词刷题 · 能做什么</text>
+            <text class="intro-line">📖 背单词：词库卡片学习，按遗忘曲线安排复习</text>
+            <text class="intro-line">✏️ 刷题：题库练习自动判分，错题回顾与学习记录</text>
+            <text class="intro-line">🗓️ 计划：背词 / 刷题计划分开，乱序或顺序可选</text>
+            <text class="intro-line">🌍 词库题库：官方预设与大家上传的共享库，选择性订阅</text>
+            <text class="intro-note">无需登录即可浏览；登录后才会保存你的个人进度。</text>
         </view>
 
         <view class="overview">
