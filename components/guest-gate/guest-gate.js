@@ -42,6 +42,10 @@ Component({
 
         noop() {},
 
+        goAgreement() {
+            wx.navigateTo({ url: '/pages/agreement/agreement' });
+        },
+
         onLogin() {
             if (this.data.loggingIn) {
                 return;

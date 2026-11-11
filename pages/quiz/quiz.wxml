@@ -11,6 +11,11 @@
             <text class="hero-sub">按每日题量练习总计划里的题目</text>
         </view>
 
+        <view wx:if="{{authState === 'signed-out'}}" class="guest-banner">
+            <text class="guest-banner-title">未登录 · 可先试练</text>
+            <text class="guest-banner-desc">点「开始刷题」即可体验答题判分；登录后才会保存你的刷题记录。</text>
+        </view>
+
         <view class="qp-card">
             <view class="qp-info">
                 <text class="qp-title">今日刷题</text>

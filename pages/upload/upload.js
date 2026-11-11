@@ -1,6 +1,7 @@
 const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 const { parseWordLines, parseQuestionLines } = require('../../utils/parser');
+const { checkLibrary } = require('../../utils/content-security');
 
 const MAX_ITEMS = 2000;
 
@@ -95,6 +96,22 @@ Page({
         }
         if (items.length > MAX_ITEMS) {
             wx.showToast({ title: '单次最多 ' + MAX_ITEMS + ' 条，请分批上传', icon: 'none' });
+            return;
+        }
+        // 公开发布前先做本地内容初筛；正式开放上传还须接入微信官方内容安全接口
+        const check = checkLibrary({
+            name,
+            category: this.data.category.trim(),
+            description: this.data.description.trim(),
+            authorName: this.data.authorName.trim(),
+        }, items);
+        if (!check.ok) {
+            wx.showModal({
+                title: '内容需要修改',
+                content: check.reason + '。为遵守内容规范，请修改后再发布。',
+                showCancel: false,
+                confirmText: '我知道了',
+            });
             return;
         }
         this.setData({ submitting: true });

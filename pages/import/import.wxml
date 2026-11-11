@@ -21,7 +21,7 @@
 
             <text class="field-label">粘贴单词内容</text>
             <textarea class="textarea" placeholder="每行一个单词，用 | 或 Tab 分隔&#10;格式：单词 | 音标 | 释义 | 例句&#10;例如：apple | ˈæpl | 苹果 | I ate an apple." value="{{wordText}}" bindinput="onWordTextInput" maxlength="50000" />
-            <text class="preview-count" wx:if="{{wordCount > 0}}">已识别 {{wordCount}} 个单词</text>
+            <text class="preview-count" wx:if="{{wordCount > 0}}">已解析 {{wordCount}} 个单词</text>
 
             <button class="import-btn" loading="{{importing}}" disabled="{{importing}}" bindtap="doImportWords">导入单词</button>
         </view>
@@ -35,7 +35,7 @@
                 <view class="type-btn {{qType === 'subjective' ? 'type-active' : ''}}" data-type="subjective" bindtap="onQTypeTap">简答题</view>
             </view>
 
-            <button class="scan-entry" bindtap="goScan">📷 拍照识别题目</button>
+            <button class="scan-entry" bindtap="goScan">✏️ 手动录入单道题</button>
 
             <text class="field-label">目标题库</text>
             <picker mode="selector" range="{{bankNames}}" value="{{bankIndex}}" bindchange="onBankChange">
@@ -47,7 +47,7 @@
             <textarea wx:if="{{qType === 'choice'}}" class="textarea" placeholder="每行一题，用 | 或 Tab 分隔&#10;题干 | 选项A | 选项B | 选项C | 选项D | 答案 | 解析&#10;答案填字母，多选填如 ABD，解析可空" value="{{questionText}}" bindinput="onQuestionTextInput" maxlength="50000" />
             <textarea wx:elif="{{qType === 'judge'}}" class="textarea" placeholder="每行一题，用 | 或 Tab 分隔&#10;题干 | 对/错 | 解析&#10;例如：地球是圆的 | 对 | 地球近似球体" value="{{questionText}}" bindinput="onQuestionTextInput" maxlength="50000" />
             <textarea wx:else class="textarea" placeholder="每行一题，用 | 或 Tab 分隔&#10;题干 | 参考答案(释义) | 解析&#10;例如：apple | 苹果 | 一种水果" value="{{questionText}}" bindinput="onQuestionTextInput" maxlength="50000" />
-            <text class="preview-count" wx:if="{{questionCount > 0}}">已识别 {{questionCount}} 道题</text>
+            <text class="preview-count" wx:if="{{questionCount > 0}}">已解析 {{questionCount}} 道题</text>
 
             <button class="import-btn" loading="{{importing}}" disabled="{{importing}}" bindtap="doImportQuestions">导入题目</button>
         </view>

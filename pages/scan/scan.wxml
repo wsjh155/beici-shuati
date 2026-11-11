@@ -13,23 +13,31 @@
         </picker>
         <input wx:if="{{bankIndex === 0}}" class="input" placeholder="新题库名称" value="{{newBankName}}" bindinput="onNewBankInput" />
 
-        <!-- 图片区域 -->
-        <view wx:if="{{!imagePath}}" class="photo-placeholder" bindtap="chooseImage">
-            <text class="photo-icon">📷</text>
-            <text class="photo-text">拍照或从相册选择题目图片</text>
-            <text class="photo-sub">建议单张图片只含一道题，识别更准确</text>
-        </view>
-        <view wx:else class="photo-area">
-            <image class="photo-preview" src="{{imagePath}}" mode="aspectFit" bindtap="chooseImage" />
-            <view class="photo-actions">
-                <button class="btn-rechoose" bindtap="chooseImage">重拍</button>
-                <button class="btn-recognize" loading="{{recognizing}}" disabled="{{recognizing}}" bindtap="doRecognize">{{recognizing ? '识别中…' : '识别题目'}}</button>
-            </view>
+        <!-- 提审版关闭 AI：拍照页仅作手动录入 -->
+        <view wx:if="{{!aiEnabled}}" class="manual-note">
+            <text class="manual-note-title">手动录入题目</text>
+            <text class="manual-note-text">填写题干、选项、答案与解析后保存到自己的题库。批量导入可到「导入内容」页粘贴文本。</text>
         </view>
 
-        <!-- 识别结果表单 -->
+        <!-- 图片区域（仅 AI 能力开启时提供） -->
+        <block wx:if="{{aiEnabled}}">
+            <view wx:if="{{!imagePath}}" class="photo-placeholder" bindtap="chooseImage">
+                <text class="photo-icon">📷</text>
+                <text class="photo-text">拍照或从相册选择题目图片</text>
+                <text class="photo-sub">建议单张图片只含一道题，识别更准确</text>
+            </view>
+            <view wx:else class="photo-area">
+                <image class="photo-preview" src="{{imagePath}}" mode="aspectFit" bindtap="chooseImage" />
+                <view class="photo-actions">
+                    <button class="btn-rechoose" bindtap="chooseImage">重拍</button>
+                    <button class="btn-recognize" loading="{{recognizing}}" disabled="{{recognizing}}" bindtap="doRecognize">{{recognizing ? '识别中…' : '识别题目'}}</button>
+                </view>
+            </view>
+        </block>
+
+        <!-- 录入表单 -->
         <view wx:if="{{hasResult}}" class="form">
-            <text class="form-title">识别结果（请核对修改）</text>
+            <text class="form-title">{{aiEnabled ? '识别结果（请核对修改）' : '题目内容'}}</text>
 
             <text class="field-label">题型</text>
             <view class="type-row">
@@ -67,8 +75,8 @@
             <text class="field-label">解析（可选）</text>
             <textarea class="textarea" value="{{analysis}}" bindinput="onAnalysisInput" maxlength="2000" />
 
-            <button class="btn-generate" loading="{{generating}}" disabled="{{generating}}" bindtap="doGenerate">✨ AI 自动生成答案与解析</button>
-            <text wx:if="{{aiGenerated}}" class="ai-tag">答案已由 AI 生成，请核对后保存</text>
+            <button wx:if="{{aiEnabled}}" class="btn-generate" loading="{{generating}}" disabled="{{generating}}" bindtap="doGenerate">✨ AI 自动生成答案与解析</button>
+            <text wx:if="{{aiEnabled && aiGenerated}}" class="ai-tag">答案已由 AI 生成，请核对后保存</text>
 
             <button class="btn-save" loading="{{saving}}" disabled="{{saving}}" bindtap="doSave">保存到题库</button>
         </view>

@@ -35,5 +35,7 @@
         </view>
 
         <button wx:if="{{authState === 'signed-in'}}" class="logout-btn" bindtap="onLogout">退出登录</button>
+        <button wx:if="{{authState === 'signed-in'}}" class="delete-btn" bindtap="onDeleteData">删除我的数据 / 注销</button>
+        <text class="privacy-note">登录前请先阅读<text class="privacy-link" bindtap="goAgreement">《用户协议》</text>与<text class="privacy-link" bindtap="goAgreement">《隐私政策》</text></text>
     </view>
 </view>

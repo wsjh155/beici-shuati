@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "拍照识别题目",
+  "navigationBarTitleText": "手动录入题目",
   "usingComponents": {
     "guest-gate": "../../components/guest-gate/guest-gate"
   }

@@ -1,6 +1,6 @@
 const { ensureSession } = require('../../utils/auth');
 const store = require('../../utils/store');
-const { recognizeQuestion, generateAnswer } = require('../../utils/ai');
+const config = require('../../utils/config');
 
 function mimeFromPath(path) {
     if (/\.png$/i.test(path)) {
@@ -11,8 +11,6 @@ function mimeFromPath(path) {
     }
     return 'image/jpeg';
 }
-
-const TYPE_LIST = ['single', 'multiple', 'judge', 'subjective'];
 
 Page({
     data: {
@@ -37,7 +35,9 @@ Page({
         aiGenerated: false,
         generating: false,
         saving: false,
-        hasResult: false,
+        aiEnabled: config.ENABLE_AI,
+        // 关闭 AI 时不需要「识别」这一步，直接展示手动录入表单
+        hasResult: !config.ENABLE_AI,
     },
 
     onShow() {
@@ -99,46 +99,10 @@ Page({
         });
     },
 
-    async doRecognize() {
-        if (!this.data.imageDataUrl) {
-            wx.showToast({ title: '请先拍照或选图', icon: 'none' });
-            return;
-        }
-        this.setData({ recognizing: true });
-        const r = await recognizeQuestion(this.data.imageDataUrl);
-        this.setData({ recognizing: false });
-        if (r.error) {
-            wx.showToast({ title: r.error.message || '识别失败', icon: 'none' });
-            return;
-        }
-        const d = r.data || {};
-        if (d.error === 'no_question') {
-            wx.showToast({ title: '未识别到题目，请重新拍摄', icon: 'none' });
-            return;
-        }
-        const type = TYPE_LIST.indexOf(d.type) >= 0 ? d.type : 'single';
-        const options = ['', '', '', ''];
-        if (Array.isArray(d.options)) {
-            for (let i = 0; i < 4 && i < d.options.length; i++) {
-                options[i] = d.options[i];
-            }
-        }
-        let answer = d.answer || '';
-        let judgeAnswer = 'A';
-        if (type === 'judge') {
-            judgeAnswer = (answer === 'B' || answer === '错' || answer === '错误') ? 'B' : 'A';
-            answer = '';
-        }
-        this.setData({
-            qType: type,
-            stem: d.stem || '',
-            options,
-            answer,
-            judgeAnswer,
-            analysis: d.analysis || '',
-            aiGenerated: false,
-            hasResult: true,
-        });
+    // 提审版不提供任何大模型识别/生成能力，拍照页仅作手动录入使用。
+    // 保留方法作为兜底，避免误触时报错。
+    doRecognize() {
+        wx.showToast({ title: '当前版本请手动录入题目', icon: 'none' });
     },
 
     onTypeTap(e) {
@@ -163,28 +127,8 @@ Page({
         this.setData({ judgeAnswer: e.currentTarget.dataset.v });
     },
 
-    async doGenerate() {
-        const stem = this.data.stem.trim();
-        if (!stem) {
-            wx.showToast({ title: '请先填写题干', icon: 'none' });
-            return;
-        }
-        const type = this.data.qType;
-        const options = (type === 'single' || type === 'multiple') ? this.data.options : [];
-        this.setData({ generating: true });
-        const r = await generateAnswer(stem, options, type);
-        this.setData({ generating: false });
-        if (r.error) {
-            wx.showToast({ title: r.error.message || '生成失败', icon: 'none' });
-            return;
-        }
-        const d = r.data || {};
-        if (type === 'judge') {
-            this.setData({ judgeAnswer: d.answer === 'B' ? 'B' : 'A', analysis: d.analysis || '', aiGenerated: true });
-        } else {
-            this.setData({ answer: d.answer || '', analysis: d.analysis || '', aiGenerated: true });
-        }
-        wx.showToast({ title: '已生成（AI 生成，请核对）', icon: 'none' });
+    doGenerate() {
+        wx.showToast({ title: '当前版本请自行填写答案与解析', icon: 'none' });
     },
 
     async doSave() {
@@ -250,7 +194,8 @@ Page({
         wx.showToast({ title: '已保存到题库', icon: 'success' });
         this.setData({
             stem: '', options: ['', '', '', ''], answer: '', judgeAnswer: 'A',
-            analysis: '', aiGenerated: false, hasResult: false, imagePath: '', imageDataUrl: '',
+            analysis: '', aiGenerated: false, hasResult: !config.ENABLE_AI,
+            imagePath: '', imageDataUrl: '',
         });
     },
 

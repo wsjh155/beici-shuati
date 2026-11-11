@@ -1,11 +1,16 @@
 const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
+const config = require('../../utils/config');
 
-// 订阅中心：官方预设题库 / 官方词库 / 用户共享库，订阅都在这里完成。
+const REPORT_REASONS = ['违法违规或敏感信息', '色情低俗', '广告导流或诈骗', '内容错误 / 侵权', '其他问题'];
+const REPORT_CODES = ['illegal', 'porn', 'ads', 'copyright', 'other'];
+
+// 订阅中心：官方预设题库 / 官方词库 / 共享库，订阅都在这里完成。
 Page({
     data: {
         authState: 'checking',
         loading: false,
+        ugcEnabled: config.ENABLE_UGC,
         tab: 'question',
         presetBanks: [],
         wordLibs: [],
@@ -76,11 +81,33 @@ Page({
     },
 
     goUpload() {
+        if (!config.ENABLE_UGC) {
+            return;
+        }
         wx.navigateTo({ url: '/pages/upload/upload' });
     },
 
     goManage() {
         wx.navigateTo({ url: '/pages/preset-bank/preset-bank' });
+    },
+
+    // 举报无需登录，游客也能提交；数据库收到举报后自动累计并在多次举报时下架
+    onReport(e) {
+        const id = e.currentTarget.dataset.id;
+        wx.showActionSheet({
+            itemList: REPORT_REASONS,
+            success: async (res) => {
+                const idx = res.tapIndex;
+                const r = await store.reportSharedLibrary(id, REPORT_CODES[idx] || 'other', REPORT_REASONS[idx] || '');
+                if (r.error) {
+                    wx.showToast({ title: '提交失败，请稍后重试', icon: 'none' });
+                    return;
+                }
+                wx.showToast({ title: '举报已提交，感谢反馈', icon: 'none' });
+                this.load();
+            },
+            fail: () => {},
+        });
     },
 
     async subscribe(kind, id) {

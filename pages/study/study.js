@@ -1,6 +1,7 @@
 const { ensureSession } = require('../../utils/auth');
 const store = require('../../utils/store');
 const prefs = require('../../utils/prefs');
+const config = require('../../utils/config');
 
 Page({
     data: {
@@ -19,6 +20,8 @@ Page({
         learnedCount: 0,
         orderMode: 'random',
         orderOverride: '',
+        isGuest: false,
+        pronunciationEnabled: config.ENABLE_PRONUNCIATION,
     },
 
     onLoad(options) {
@@ -49,14 +52,52 @@ Page({
     async restore() {
         const session = await ensureSession(this);
         if (!session) {
+            // 游客不空白：给一组公开示例词，真实体验卡片学习后再决定是否登录
+            await this.loadGuestDemo();
             return;
         }
+        this.setData({ isGuest: false });
         this.loadWords();
     },
 
     onSignedIn() {
         getApp().resetSession();
         this.restore();
+    },
+
+    // 试学模式：只读公开词库，不写入任何个人数据
+    async loadGuestDemo() {
+        if (this.data.authState !== 'signed-out') {
+            return;
+        }
+        this.setData({ loading: true, isGuest: true });
+        const r = await store.listPublicDemoWords(8);
+        if (this.data.authState !== 'signed-out') {
+            return;
+        }
+        const list = (r.data || []).map((w) => ({ ...w, source: 'demo' }));
+        const orderMode = this.data.orderOverride || 'random';
+        const ordered = store.applyOrder(list, orderMode);
+        this.baseList = list;
+        this.consumedItems = [];
+        this.setData({
+            loading: false,
+            orderMode,
+            wordList: ordered,
+            total: ordered.length,
+            currentIndex: 0,
+            current: ordered.length > 0 ? ordered[0] : null,
+            flipped: false,
+            done: false,
+            learnedCount: 0,
+        });
+    },
+
+    openLogin() {
+        const gate = this.selectComponent('#guestGate');
+        if (gate) {
+            gate.open();
+        }
     },
 
     async loadWords() {
@@ -167,11 +208,13 @@ Page({
             current: list[idx] || null,
             flipped: false,
         });
-        // 词库学习：只改这个词库的顺序；其余场景改全局背词计划
-        if (this.data.libraryId) {
-            prefs.setLibraryOrder(this.data.libraryId, next);
-        } else {
-            store.saveOrderMode('word', next);
+        // 试学模式不写任何设置；登录后才会持久化顺序偏好
+        if (!this.data.isGuest) {
+            if (this.data.libraryId) {
+                prefs.setLibraryOrder(this.data.libraryId, next);
+            } else {
+                store.saveOrderMode('word', next);
+            }
         }
         wx.showToast({ title: next === 'random' ? '已切换为乱序' : '已切换为顺序', icon: 'none' });
     },
@@ -242,6 +285,10 @@ Page({
     },
 
     playAudio() {
+        if (!config.ENABLE_PRONUNCIATION) {
+            wx.showToast({ title: '当前版本暂不提供发音', icon: 'none' });
+            return;
+        }
         const word = this.data.current && this.data.current.word;
         if (!word) {
             return;
@@ -269,21 +316,23 @@ Page({
             this.consumedItems = [];
         }
         this.consumedItems.push(cur);
-        const source = cur.source || (this.data.mode === 'library' ? 'mark' : 'word');
-        if (source === 'mark') {
-            // 云端词库/标记：记录跨子词库标记
-            store.upsertWordMark(cur.word, known);
-        } else {
-            const newProgress = known ? Math.min((cur.progress || 0) + 1, store.MAX_PROGRESS) : 0;
-            const reviewCount = (cur.review_count || 0) + 1;
-            // 后台同步记忆进度，不阻塞翻卡
-            store.updateWord(cur.id, {
-                progress: newProgress,
-                review_count: reviewCount,
-                next_review_at: store.nextReviewAt(newProgress),
-            });
-            // 记录复习日志（用于动态调整计划）
-            store.addReviewLog(cur.id, known);
+        if (!this.data.isGuest) {
+            const source = cur.source || (this.data.mode === 'library' ? 'mark' : 'word');
+            if (source === 'mark') {
+                // 云端词库/标记：记录跨子词库标记
+                store.upsertWordMark(cur.word, known);
+            } else {
+                const newProgress = known ? Math.min((cur.progress || 0) + 1, store.MAX_PROGRESS) : 0;
+                const reviewCount = (cur.review_count || 0) + 1;
+                // 后台同步记忆进度，不阻塞翻卡
+                store.updateWord(cur.id, {
+                    progress: newProgress,
+                    review_count: reviewCount,
+                    next_review_at: store.nextReviewAt(newProgress),
+                });
+                // 记录复习日志（用于动态调整计划）
+                store.addReviewLog(cur.id, known);
+            }
         }
 
         const nextIndex = this.data.currentIndex + 1;

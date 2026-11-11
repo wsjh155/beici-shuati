@@ -116,3 +116,25 @@
     background: #ffffff;
     border-radius: 44rpx;
 }
+
+.delete-btn {
+    margin-top: 20rpx;
+    height: 80rpx;
+    font-size: 26rpx;
+    color: #8a94a6;
+    background: transparent;
+    border: 1rpx solid #d8dde6;
+    border-radius: 40rpx;
+}
+
+.privacy-note {
+    display: block;
+    margin: 32rpx 0 20rpx;
+    text-align: center;
+    font-size: 23rpx;
+    color: #9aa4b5;
+}
+
+.privacy-link {
+    color: #3b6ef5;
+}

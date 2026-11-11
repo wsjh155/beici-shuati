@@ -1,6 +1,7 @@
 const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 const { parseWordLines, parseQuestionLines } = require('../../utils/parser');
+const { checkItems, checkMeta } = require('../../utils/content-security');
 
 Page({
     data: {
@@ -79,7 +80,16 @@ Page({
     },
 
     goScan() {
-        wx.navigateTo({ url: '/pages/scan/scan', fail: () => wx.showToast({ title: '页面暂未开放', icon: 'none' }) });
+        wx.navigateTo({ url: '/pages/scan/scan', fail: () => wx.showToast({ title: '打开失败，请重试', icon: 'none' }) });
+    },
+
+    showSecurityTip(reason) {
+        wx.showModal({
+            title: '内容需要修改',
+            content: reason + '。为遵守内容规范，请修改后再导入。',
+            showCancel: false,
+            confirmText: '我知道了',
+        });
     },
 
     onWordTextInput(e) {
@@ -103,6 +113,14 @@ Page({
         const words = parseWordLines(text);
         if (words.length === 0) {
             wx.showToast({ title: '未解析到有效单词', icon: 'none' });
+            return;
+        }
+        const nameCheck = this.data.bookIndex === 0
+            ? checkMeta(this.data.newBookName.trim(), '名称')
+            : { ok: true };
+        const contentCheck = nameCheck.ok ? checkItems(words) : nameCheck;
+        if (!contentCheck.ok) {
+            this.showSecurityTip(contentCheck.reason);
             return;
         }
         let bookId = this.data.bookIndex === 0 ? null : (this.data.wordbooks[this.data.bookIndex - 1] || {}).id;
@@ -146,6 +164,14 @@ Page({
         const questions = parseQuestionLines(text, this.data.qType);
         if (questions.length === 0) {
             wx.showToast({ title: '未解析到有效题目，请检查格式', icon: 'none' });
+            return;
+        }
+        const nameCheck = this.data.bankIndex === 0
+            ? checkMeta(this.data.newBankName.trim(), '名称')
+            : { ok: true };
+        const contentCheck = nameCheck.ok ? checkItems(questions) : nameCheck;
+        if (!contentCheck.ok) {
+            this.showSecurityTip(contentCheck.reason);
             return;
         }
         let bankId = this.data.bankIndex === 0 ? null : (this.data.banks[this.data.bankIndex - 1] || {}).id;

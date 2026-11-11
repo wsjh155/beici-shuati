@@ -11,6 +11,11 @@
             <text class="hero-sub">按每日计划学习总计划里的单词</text>
         </view>
 
+        <view wx:if="{{authState === 'signed-out'}}" class="guest-banner">
+            <text class="guest-banner-title">未登录 · 可先试学</text>
+            <text class="guest-banner-desc">点「开始学习」即可体验卡片背词；登录后才会保存你的计划与进度。</text>
+        </view>
+
         <view class="plan-card">
             <view class="plan-row">
                 <view class="plan-item">

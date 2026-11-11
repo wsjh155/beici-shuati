@@ -12,4 +12,8 @@ Page({
             success: () => wx.showToast({ title: '链接已复制', icon: 'none' }),
         });
     },
+
+    goAgreement() {
+        wx.navigateTo({ url: '/pages/agreement/agreement' });
+    },
 });

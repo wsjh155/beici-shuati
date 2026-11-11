@@ -12,14 +12,15 @@
         </view>
 
         <view class="entry-row">
-            <button class="entry-btn primary" bindtap="goUpload">＋ 上传我的题库/词库</button>
+            <button wx:if="{{ugcEnabled}}" class="entry-btn primary" bindtap="goUpload">＋ 上传我的题库/词库</button>
             <button class="entry-btn" bindtap="goManage">管理 · 取消订阅</button>
         </view>
+        <text wx:if="{{!ugcEnabled}}" class="notice">共享内容由官方整理并经安全审核；如发现违规内容，可点卡片上的「举报」反馈。</text>
 
         <view class="tab-bar">
             <view class="tab-item {{tab === 'question' ? 'active' : ''}}" data-tab="question" bindtap="onTabTap">预设题库 {{presetBanks.length}}</view>
             <view class="tab-item {{tab === 'word' ? 'active' : ''}}" data-tab="word" bindtap="onTabTap">预设词库 {{wordLibs.length}}</view>
-            <view class="tab-item {{tab === 'shared' ? 'active' : ''}}" data-tab="shared" bindtap="onTabTap">用户共享 {{sharedLibs.length}}</view>
+            <view class="tab-item {{tab === 'shared' ? 'active' : ''}}" data-tab="shared" bindtap="onTabTap">{{ugcEnabled ? '用户共享' : '官方精选'}} {{sharedLibs.length}}</view>
         </view>
 
         <view wx:if="{{tab === 'question'}}">
@@ -57,17 +58,18 @@
         <view wx:if="{{tab === 'shared'}}">
             <view wx:if="{{sharedLibs.length === 0 && !loading}}" class="empty">
                 <text class="empty-emoji">🌍</text>
-                <text class="empty-text">还没有人上传共享库</text>
-                <text class="empty-sub">点上方「上传我的题库/词库」成为第一个</text>
+                <text class="empty-text">暂无精选共享内容</text>
+                <text class="empty-sub">可先订阅上方的官方预设题库与词库</text>
             </view>
             <view class="card" wx:for="{{sharedLibs}}" wx:key="id">
                 <view class="card-info">
                     <text class="card-name">{{item.name}}</text>
                     <text class="card-desc">{{item.description}}</text>
-                    <text class="card-count">{{item.category}} · {{item.kindLabel}} · {{item.item_count}} {{item.unit}} · 由 {{item.author_name || '匿名用户'}} 上传</text>
+                    <text class="card-count">{{item.category}} · {{item.kindLabel}} · {{item.item_count}} {{item.unit}} · 由 {{item.author_name || '官方'}} 整理</text>
                 </view>
                 <view class="card-actions">
-                    <button wx:if="{{item.isMine}}" class="btn-del" data-id="{{item.id}}" bindtap="onDeleteShared">删除</button>
+                    <button wx:if="{{item.isMine && ugcEnabled}}" class="btn-del" data-id="{{item.id}}" bindtap="onDeleteShared">删除</button>
+                    <button class="btn-report" data-id="{{item.id}}" bindtap="onReport">举报</button>
                     <button wx:if="{{item.subscribed}}" class="btn-off" disabled>已有</button>
                     <button wx:else class="btn-on" data-id="{{item.id}}" loading="{{subscribingId === 'shared:' + item.id}}" bindtap="onSubscribeShared">订阅</button>
                 </view>

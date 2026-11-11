@@ -15,9 +15,9 @@
     "pages/preset/preset",
     "pages/preset-bank/preset-bank",
     "pages/community/community",
-    "pages/upload/upload",
     "pages/plan/plan",
     "pages/tutorial/tutorial",
+    "pages/agreement/agreement",
     "pages/about/about"
   ],
   "window": {

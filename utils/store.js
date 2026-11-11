@@ -723,8 +723,62 @@ async function deleteWordbookCascade(wordbookId) {
 
 // ==================== 用户共享题库 / 词库 ====================
 // 所有人可读并可选择性订阅；只有上传者本人能修改/删除。
+// 举报共享内容：写入举报记录后由数据库触发器累计次数，达到阈值自动下架。
+async function reportSharedLibrary(libraryId, reason, detail) {
+    const id = Number(libraryId);
+    // 同一账号对同一份内容只计一次举报，避免误点或重复提交导致内容被误下架
+    const exists = await safe(() => db().from('library_reports')
+        .select('id').eq('library_id', id).limit(1));
+    if (!exists.error && Array.isArray(exists.data) && exists.data.length > 0) {
+        return { data: { already: true }, error: null };
+    }
+    return safe(() => db().from('library_reports').insert({
+        library_id: id,
+        reason: reason || 'other',
+        detail: detail || '',
+    }).select('*'));
+}
+
+// 游客体验模式：从公开预设表取少量示例题 / 示例词，不写入任何个人数据。
+function listPublicDemoQuestions(limit) {
+    return safe(() => db().from('preset_questions')
+        .select('id, bank_id, type, stem, options, answer, analysis')
+        .eq('type', 'single')
+        .order('id', { ascending: true })
+        .limit(limit || 8));
+}
+
+function listPublicDemoWords(limit) {
+    return safe(() => db().from('library_words')
+        .select('id, word, phonetic, meaning, example')
+        .order('id', { ascending: true })
+        .limit(limit || 8));
+}
+
+// 注销 / 删除我的数据：按依赖顺序清理当前账号的私有学习数据。
+// 所有表均开启 RLS，DELETE 策略为 owner_id = auth.uid()，因此只会删到自己的数据。
+const ACCOUNT_TABLES = [
+    'question_marks', 'wrong_questions', 'practice_records', 'review_logs',
+    'user_word_marks', 'plan_items', 'words', 'wordbooks',
+    'questions', 'question_banks', 'plan_settings',
+    // 自己上传过的共享内容、内容与举报记录同样属于个人数据
+    'shared_library_items', 'shared_libraries', 'library_reports',
+];
+async function deleteMyAccountData() {
+    const failed = [];
+    for (const table of ACCOUNT_TABLES) {
+        const r = await safe(() => db().from(table).delete().neq('owner_id', ''));
+        if (r.error) {
+            failed.push(table);
+        }
+    }
+    return { data: { failed }, error: null };
+}
+
 function listSharedLibraries(kind) {
-    let query = db().from('shared_libraries').select('*').order('created_at', { ascending: false });
+    let query = db().from('shared_libraries').select('*')
+        .neq('status', 'blocked')
+        .order('created_at', { ascending: false });
     if (kind === 'question' || kind === 'word') {
         query = query.eq('kind', kind);
     }
@@ -1229,6 +1283,10 @@ module.exports = {
     listSharedLibraryItems,
     subscribeSharedLibrary,
     deleteSharedLibrary,
+    reportSharedLibrary,
+    listPublicDemoQuestions,
+    listPublicDemoWords,
+    deleteMyAccountData,
     // 云端词库（等级/子词库/单词/标记）
     listWordSeries,
     listWordLibraries,

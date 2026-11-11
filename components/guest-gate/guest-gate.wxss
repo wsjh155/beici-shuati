@@ -106,6 +106,18 @@
     font-size: 29rpx;
 }
 
+.sheet-agree {
+    margin-top: 22rpx;
+    font-size: 23rpx;
+    line-height: 1.6;
+    text-align: center;
+    color: #8a94a6;
+}
+
+.sheet-link {
+    color: #3b6ef5;
+}
+
 .sheet-error {
     margin-top: 20rpx;
     font-size: 24rpx;

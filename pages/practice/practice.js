@@ -47,6 +47,7 @@ Page({
         orderMode: 'random',
         orderOverride: '',
         bankIdForOrder: 0,
+        isGuest: false,
     },
 
     onLoad(options) {
@@ -66,14 +67,54 @@ Page({
     async restore() {
         const session = await ensureSession(this);
         if (!session) {
+            // 游客不空白：给一组公开示例题，真实体验答题判分后再决定是否登录
+            await this.loadGuestDemo();
             return;
         }
+        this.setData({ isGuest: false });
         this.loadQuestions();
     },
 
     onSignedIn() {
         getApp().resetSession();
         this.restore();
+    },
+
+    // 试练模式：只读公开预设题，不记录答题结果、错题或练习记录
+    async loadGuestDemo() {
+        if (this.data.authState !== 'signed-out') {
+            return;
+        }
+        this.setData({ loading: true, isGuest: true });
+        const r = await store.listPublicDemoQuestions(8);
+        if (this.data.authState !== 'signed-out') {
+            return;
+        }
+        const orderMode = this.data.orderOverride || 'random';
+        const base = (r.data || []).map((q) => ({ ...q, options: parseOptions(q) }));
+        this.baseQuestions = base;
+        const questions = store.applyOrder(base, orderMode);
+        this.setData({
+            loading: false,
+            orderMode,
+            bankIdForOrder: 0,
+            questions,
+            index: 0,
+            current: questions.length > 0 ? questions[0] : null,
+            submitted: false,
+            correct: false,
+            reveal: false,
+            totalCount: 0,
+            correctCount: 0,
+            done: false,
+        });
+    },
+
+    openLogin() {
+        const gate = this.selectComponent('#guestGate');
+        if (gate) {
+            gate.open();
+        }
     },
 
     async loadQuestions() {
@@ -178,11 +219,13 @@ Page({
         const rest = base.filter((q) => headIds.indexOf(q.id) < 0);
         const list = head.concat(store.applyOrder(rest, next));
         this.setData({ orderMode: next, orderOverride: next, questions: list });
-        // 单题库练习：只改这个题库的顺序；混合/总计划：改全局刷题顺序
-        if (this.data.bankIdForOrder) {
-            prefs.setBankOrder(this.data.bankIdForOrder, next);
-        } else {
-            store.saveOrderMode('question', next);
+        // 试练模式不写任何设置；登录后才会持久化顺序偏好
+        if (!this.data.isGuest) {
+            if (this.data.bankIdForOrder) {
+                prefs.setBankOrder(this.data.bankIdForOrder, next);
+            } else {
+                store.saveOrderMode('question', next);
+            }
         }
         wx.showToast({ title: next === 'random' ? '已切换为乱序' : '已切换为顺序', icon: 'none' });
     },
@@ -225,12 +268,14 @@ Page({
         }));
         this.setData({ submitted: true, correct, 'current.options': options });
 
-        if (correct) {
-            store.removeWrongByQuestionId(cur.id);
-        } else {
-            store.addWrongQuestion(cur.id, this.data.bankId);
+        if (!this.data.isGuest) {
+            if (correct) {
+                store.removeWrongByQuestionId(cur.id);
+            } else {
+                store.addWrongQuestion(cur.id, this.data.bankId);
+            }
+            store.recordQuestionResult(cur.id, cur.bank_id || this.data.bankId, correct);
         }
-        store.recordQuestionResult(cur.id, cur.bank_id || this.data.bankId, correct);
         this.setData({
             totalCount: this.data.totalCount + 1,
             correctCount: this.data.correctCount + (correct ? 1 : 0),
@@ -245,12 +290,14 @@ Page({
         const grade = e.currentTarget.dataset.grade;
         const cur = this.data.current;
         const right = grade === 'right';
-        if (right) {
-            store.removeWrongByQuestionId(cur.id);
-        } else {
-            store.addWrongQuestion(cur.id, this.data.bankId);
+        if (!this.data.isGuest) {
+            if (right) {
+                store.removeWrongByQuestionId(cur.id);
+            } else {
+                store.addWrongQuestion(cur.id, this.data.bankId);
+            }
+            store.recordQuestionResult(cur.id, cur.bank_id || this.data.bankId, right);
         }
-        store.recordQuestionResult(cur.id, cur.bank_id || this.data.bankId, right);
         this.setData({
             totalCount: this.data.totalCount + 1,
             correctCount: this.data.correctCount + (right ? 1 : 0),
@@ -278,7 +325,9 @@ Page({
         const correct = this.data.correctCount;
         const score = total > 0 ? Math.round((correct / total) * 100) : 0;
         this.setData({ done: true, finalTotal: total, finalCorrect: correct, finalScore: score });
-        store.createPracticeRecord({ bank_id: this.data.bankId, total, correct, score });
+        if (!this.data.isGuest) {
+            store.createPracticeRecord({ bank_id: this.data.bankId, total, correct, score });
+        }
     },
 
     goBack() {

@@ -16,7 +16,7 @@
         <text class="step-index">2</text>
         <view class="step-body">
             <text class="step-title">添加题库（刷题）</text>
-            <text class="step-desc">底部「刷题」页 →「添加题库」→「预设题库」里订阅，题目会自动进入刷题总计划。</text>
+            <text class="step-desc">首页 →「预设题库 · 订阅」→ 选择官方预设题库订阅，题目会自动进入刷题总计划；已订阅的库在「题库 / 词库总览」里管理或取消订阅。</text>
         </view>
     </view>
 
@@ -48,5 +48,6 @@
         <text class="tip-title">小提示</text>
         <text class="tip-text">• 熟词可以标记「认识」快速跳过，达到一定次数后自动掌握，不再重复出现。</text>
         <text class="tip-text">• 「错题回顾」可重做错题；「学习统计」查看进度与正确率。</text>
+        <text class="tip-text">• 不用登录也能先试学单词、试练刷题；想保存进度时，再在弹层里点「微信一键登录」即可，随时可以选「暂不登录」。</text>
     </view>
 </view>

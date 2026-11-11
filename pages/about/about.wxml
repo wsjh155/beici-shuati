@@ -19,12 +19,19 @@
 
     <view class="card">
         <text class="card-title">说明</text>
-        <text class="card-text">词库与题目仅供学习参考，释义与解析如有个别偏差，欢迎反馈指正。本小程序免费使用。</text>
+        <text class="card-text">词库与题目仅供学习参考，释义与解析如有个别偏差，欢迎反馈指正。本小程序免费使用，不含广告、内购或其它付费项目。</text>
+        <text class="card-text">微信一键登录仅生成匿名账号标识，不获取你的昵称、头像或手机号；具体见用户协议与隐私政策。</text>
+    </view>
+
+    <view class="card">
+        <text class="card-title">协议与反馈</text>
+        <text class="link" bindtap="goAgreement">查看《用户协议》与《隐私政策》 ›</text>
+        <text class="copy-hint">包含账号注销、数据删除方式与内容规范</text>
     </view>
 
     <view class="card">
         <text class="card-title">开源地址</text>
-        <text class="card-text">本项目已开源，欢迎 Star、提 Issue 一起完善：</text>
+        <text class="card-text">本项目代码已开源，可在浏览器中打开仓库查看或反馈问题：</text>
         <text class="link" bindtap="copyLink">{{githubUrl}}</text>
         <text class="copy-hint">点击链接可复制</text>
     </view>

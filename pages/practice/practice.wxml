@@ -10,6 +10,13 @@
         <text class="state-text">加载中...</text>
     </view>
 
+    <view wx:elif="{{isGuest && questions.length === 0}}" class="state-box">
+        <text class="empty-emoji">✏️</text>
+        <text class="empty-text">示例题目暂时加载失败</text>
+        <text class="empty-sub">请检查网络后返回重试，或登录后使用自己的题库</text>
+        <button class="back-btn" bindtap="goBack">返回</button>
+    </view>
+
     <view wx:elif="{{questions.length === 0}}" class="state-box">
         <text class="empty-emoji">📭</text>
         <text class="empty-text">{{mode === 'planPool' ? '所选科目暂无题目' : (mode === 'plan' ? '今日刷题计划已完成' : ((idsStr || mode === 'redo') ? '没有可重做的题目' : '这个题库还没有题目'))}}</text>
@@ -21,11 +28,16 @@
         <text class="empty-emoji">🏆</text>
         <text class="empty-text">练习完成！</text>
         <text class="score-num">{{finalScore}}</text>
-        <text class="empty-sub">共 {{finalTotal}} 题，答对 {{finalCorrect}} 题</text>
+        <text class="empty-sub">共 {{finalTotal}} 题，答对 {{finalCorrect}} 题{{isGuest ? '（试练模式，成绩不保存）' : ''}}</text>
+        <button wx:if="{{isGuest}}" class="login-cta" bindtap="openLogin">登录后保存我的刷题记录</button>
         <button class="back-btn" bindtap="goBack">完成</button>
     </view>
 
     <view wx:else class="practice">
+        <view wx:if="{{isGuest}}" class="guest-tip">
+            <text class="guest-tip-text">试练模式 · 示例题目，成绩不会保存</text>
+            <text class="guest-tip-link" bindtap="openLogin">登录保存进度 ›</text>
+        </view>
         <view class="progress-row">
             <text class="progress-text">{{index + 1}} / {{questions.length}}</text>
             <view class="tag-wrap">

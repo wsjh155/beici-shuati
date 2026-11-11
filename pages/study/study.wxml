@@ -10,6 +10,13 @@
         <text class="state-text">加载中...</text>
     </view>
 
+    <view wx:elif="{{isGuest && total === 0}}" class="state-box">
+        <text class="empty-emoji">📖</text>
+        <text class="empty-text">示例内容暂时加载失败</text>
+        <text class="empty-sub">请检查网络后返回重试，或登录后使用自己的词库</text>
+        <button class="back-btn" bindtap="goBack">返回</button>
+    </view>
+
     <view wx:elif="{{total === 0}}" class="state-box">
         <text class="empty-emoji">🎉</text>
         <text class="empty-text">{{mode === 'planPool' ? '总计划里还没有单词' : (mode === 'library' ? '这个子词库的单词都背完了' : (mode === 'review' ? '暂无待复习的单词' : (mode === 'learned' ? '还没有学过的单词' : (mode === 'plan' ? '今日计划已完成' : '这个单词本还没有单词'))))}}</text>
@@ -20,11 +27,16 @@
     <view wx:elif="{{done}}" class="state-box">
         <text class="empty-emoji">🎊</text>
         <text class="empty-text">本轮学习完成！</text>
-        <text class="empty-sub">本次共学习 {{learnedCount}} 个单词</text>
+        <text class="empty-sub">本次共学习 {{learnedCount}} 个单词{{isGuest ? '（试学模式，进度不保存）' : ''}}</text>
+        <button wx:if="{{isGuest}}" class="login-cta" bindtap="openLogin">登录后保存我的学习进度</button>
         <button class="back-btn" bindtap="goBack">完成</button>
     </view>
 
     <view wx:else class="study">
+        <view wx:if="{{isGuest}}" class="guest-tip">
+            <text class="guest-tip-text">试学模式 · 示例单词，进度不会保存</text>
+            <text class="guest-tip-link" bindtap="openLogin">登录保存进度 ›</text>
+        </view>
         <view class="progress-bar">
             <view class="progress-fill" style="width: {{(currentIndex / total) * 100}}%"></view>
         </view>
@@ -50,7 +62,7 @@
             </view>
         </view>
 
-        <view class="audio-btn" bindtap="playAudio">🔊 播放发音</view>
+        <view wx:if="{{pronunciationEnabled}}" class="audio-btn" bindtap="playAudio">🔊 播放发音</view>
 
         <view class="actions">
             <button class="action-btn action-forgot" data-known="0" bindtap="mark">不认识</button>

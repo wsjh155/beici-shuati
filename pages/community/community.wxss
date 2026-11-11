@@ -28,6 +28,14 @@
     color: #8a94a6;
 }
 
+.notice {
+    display: block;
+    margin: -8rpx 8rpx 20rpx;
+    font-size: 24rpx;
+    line-height: 1.6;
+    color: #8a94a6;
+}
+
 .entry-row {
     display: flex;
     margin: 8rpx 0 24rpx;
@@ -148,6 +156,16 @@
     color: #e05a5a;
     background: #fff1f1;
     border-radius: 28rpx;
+}
+
+.btn-report {
+    width: 132rpx;
+    height: 52rpx;
+    margin-bottom: 10rpx;
+    font-size: 22rpx;
+    color: #8a94a6;
+    background: #f0f2f5;
+    border-radius: 26rpx;
 }
 
 .empty {

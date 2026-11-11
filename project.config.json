@@ -9,6 +9,38 @@
       {
         "type": "folder",
         "value": "node_modules"
+      },
+      {
+        "type": "folder",
+        "value": ".git"
+      },
+      {
+        "type": "folder",
+        "value": "pages/upload"
+      },
+      {
+        "type": "file",
+        "value": "utils/ai.js"
+      },
+      {
+        "type": "file",
+        "value": "README.md"
+      },
+      {
+        "type": "file",
+        "value": "LICENSE"
+      },
+      {
+        "type": "file",
+        "value": "package.json"
+      },
+      {
+        "type": "file",
+        "value": "package-lock.json"
+      },
+      {
+        "type": "file",
+        "value": ".gitignore"
       }
     ],
     "include": []

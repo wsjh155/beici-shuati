@@ -120,7 +120,7 @@
         </view>
 
         <view class="card">
-            <text class="card-title">智能建议</text>
+            <text class="card-title">学习建议</text>
             <text class="adjust-tip">{{adjustTip}}</text>
             <text class="adjust-sub">近 7 天复习正确率：{{recentAccuracy}}%</text>
             <text class="adjust-note">复习采用艾宾浩斯遗忘曲线间隔（1/2/4/7/15/30 天），到期自动提醒</text>
