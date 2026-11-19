@@ -57,6 +57,13 @@
     color: #8a94a6;
 }
 
+.stat-sub {
+    display: block;
+    margin-top: 10rpx;
+    font-size: 22rpx;
+    color: rgba(255, 255, 255, 0.75);
+}
+
 .detail-card {
     margin-top: 8rpx;
     padding: 8rpx 32rpx;
@@ -84,5 +91,29 @@
 
 .detail-value {
     font-size: 28rpx;
+    color: #8a94a6;
+}
+
+.stats-note {
+    margin-top: 24rpx;
+    padding: 28rpx 32rpx;
+    border-radius: 24rpx;
+    background: #ffffff;
+    box-shadow: 0 4rpx 16rpx rgba(31, 35, 41, 0.04);
+}
+
+.note-title {
+    display: block;
+    margin-bottom: 16rpx;
+    font-size: 28rpx;
+    font-weight: 600;
+    color: #1f2329;
+}
+
+.note-line {
+    display: block;
+    margin-top: 8rpx;
+    font-size: 24rpx;
+    line-height: 1.6;
     color: #8a94a6;
 }

@@ -1204,6 +1204,26 @@ async function recentReviewStats(days) {
     const known = logs.filter((l) => l.known).length;
     return { data: { total: logs.length, known }, error: null };
 }
+// 学习统计用：历史复习总次数（精确计数，不受单页 1000 条上限影响）+ 近期活跃日期
+async function getReviewStats() {
+    const totalRes = await safe(() => db().from('review_logs')
+        .select('id', { count: 'exact', head: true }));
+    if (totalRes.error) {
+        return totalRes;
+    }
+    const datesRes = await safe(() => db().from('review_logs')
+        .select('created_at').order('created_at', { ascending: false }).limit(1000));
+    if (datesRes.error) {
+        return datesRes;
+    }
+    return {
+        data: {
+            total: totalRes.count || 0,
+            dates: (datesRes.data || []).map((r) => r.created_at).filter(Boolean),
+        },
+        error: null,
+    };
+}
 
 module.exports = {
     nextReviewAt,
@@ -1310,4 +1330,5 @@ module.exports = {
     // 复习记录
     addReviewLog,
     recentReviewStats,
+    getReviewStats,
 };

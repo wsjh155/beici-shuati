@@ -8,8 +8,9 @@
     <view wx:else class="content">
         <view class="stat-grid">
             <view class="stat-card stat-primary">
-                <text class="stat-num">{{totalWords}}</text>
-                <text class="stat-label">累计单词</text>
+                <text class="stat-num">{{learnedWords}}</text>
+                <text class="stat-label">已学单词</text>
+                <text class="stat-sub">有过学习记录的单词</text>
             </view>
             <view class="stat-card stat-green">
                 <text class="stat-num">{{streak}}</text>
@@ -26,6 +27,14 @@
         </view>
 
         <view class="detail-card">
+            <view class="detail-row">
+                <text class="detail-label">词库收录</text>
+                <text class="detail-value">{{wordBankCount}} 词</text>
+            </view>
+            <view class="detail-row">
+                <text class="detail-label">累计复习</text>
+                <text class="detail-value">{{reviewTimes}} 次</text>
+            </view>
             <view class="detail-row">
                 <text class="detail-label">累计做题</text>
                 <text class="detail-value">{{totalQuestions}} 题</text>
@@ -50,6 +59,13 @@
                 <text class="detail-label">词库学习</text>
                 <text class="detail-value">{{marksCount}} 词</text>
             </view>
+        </view>
+
+        <view class="stats-note">
+            <text class="note-title">统计口径</text>
+            <text class="note-line">• 已学单词：当前词库中已产生学习记录的不同单词，与「学习记录」页一致。</text>
+            <text class="note-line">• 词库收录：你导入或订阅的词库容量，不代表已经学过。</text>
+            <text class="note-line">• 累计复习：历史翻卡次数，包含已移除词库的记录；更换词库后不会清零。</text>
         </view>
     </view>
 </view>

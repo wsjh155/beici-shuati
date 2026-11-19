@@ -42,7 +42,9 @@ Page({
     data: {
         authState: 'checking',
         loading: false,
-        totalWords: 0,
+        learnedWords: 0,
+        wordBankCount: 0,
+        reviewTimes: 0,
         practiceCount: 0,
         totalQuestions: 0,
         totalCorrect: 0,
@@ -73,13 +75,15 @@ Page({
 
     async load() {
         this.setData({ loading: true });
-        const [words, records, wrongs, marks, masteredWords, qmarks] = await Promise.all([
+        const [words, learned, records, wrongs, marks, masteredWords, qmarks, reviews] = await Promise.all([
             store.countAllWords(),
+            store.listLearnedWords(),
             store.listPracticeRecords(),
             store.listWrongQuestions(),
             store.listAllMarks(),
             store.countMasteredWords(),
             store.listQuestionMarks(),
+            store.getReviewStats(),
         ]);
         if (this.data.authState !== 'signed-in') {
             return;
@@ -94,13 +98,19 @@ Page({
         const marksCount = markRows.length;
         const masteredMarks = markRows.filter((m) => m.status === 'mastered').length;
         const mastered = (masteredWords.count || 0) + masteredMarks;
-        // 连续学习：刷题记录 ∪ 词库学习 ∪ 做题更新的日期
+        // 已学单词与「学习记录」页同源：词库标记 + 单词本中 progress>0 的词，按词去重
+        const learnedWords = (learned.data || []).length;
+        const reviewData = reviews.data || {};
+        // 连续学习：刷题记录 ∪ 词库学习 ∪ 做题更新 ∪ 背词复习的日期
         const activity = recs.map((r) => r.created_at)
             .concat(markRows.map((m) => m.updated_at))
-            .concat(qmRows.map((m) => m.updated_at));
+            .concat(qmRows.map((m) => m.updated_at))
+            .concat(reviewData.dates || []);
         this.setData({
             loading: false,
-            totalWords: (words.count || 0) + marksCount,
+            learnedWords,
+            wordBankCount: words.count || 0,
+            reviewTimes: reviewData.total || 0,
             practiceCount: recs.length,
             totalQuestions,
             totalCorrect,
