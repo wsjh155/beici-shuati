@@ -98,9 +98,15 @@ Page({
         const marksCount = markRows.length;
         const masteredMarks = markRows.filter((m) => m.status === 'mastered').length;
         const mastered = (masteredWords.count || 0) + masteredMarks;
-        // 已学单词与「学习记录」页同源：词库标记 + 单词本中 progress>0 的词，按词去重
-        const learnedWords = (learned.data || []).length;
+        // 已学单词 = 累计产生过学习记录的不同单词：
+        // ① 当前词库里已学过的词（与学习记录页同源）② 历史复习日志里的词（词库被换掉后仍算学过）
+        // ① 中来自单词本的有 id，可与 ② 的 word_id 去重；词库标记是独立文本体系，单独按词计
+        const learnedList = learned.data || [];
         const reviewData = reviews.data || {};
+        const learnedIds = new Set(learnedList.filter((x) => x.id != null).map((x) => String(x.id)));
+        (reviewData.wordIds || []).forEach((id) => learnedIds.add(String(id)));
+        const markedOnly = new Set(learnedList.filter((x) => x.id == null && x.word).map((x) => x.word));
+        const learnedWords = learnedIds.size + markedOnly.size;
         // 连续学习：刷题记录 ∪ 词库学习 ∪ 做题更新 ∪ 背词复习的日期
         const activity = recs.map((r) => r.created_at)
             .concat(markRows.map((m) => m.updated_at))

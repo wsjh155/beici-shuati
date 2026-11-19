@@ -63,7 +63,7 @@
 
         <view class="stats-note">
             <text class="note-title">统计口径</text>
-            <text class="note-line">• 已学单词：当前词库中已产生学习记录的不同单词，与「学习记录」页一致。</text>
+            <text class="note-line">• 已学单词：累计产生过学习记录的不同单词，包含已移除词库的历史记录；与「学习记录」页里当前可管理的条目不一定相同。</text>
             <text class="note-line">• 词库收录：你导入或订阅的词库容量，不代表已经学过。</text>
             <text class="note-line">• 累计复习：历史翻卡次数，包含已移除词库的记录；更换词库后不会清零。</text>
         </view>
