@@ -1,7 +1,12 @@
+const share = require('../../utils/share');
+
 const { ensureSession } = require('../../utils/auth');
 const store = require('../../utils/store');
 
 Page({
+    onShareAppMessage() {
+        return share.toFriend();
+    },
     data: {
         authState: 'checking',
         loading: false,

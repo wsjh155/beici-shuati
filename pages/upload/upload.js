@@ -1,3 +1,5 @@
+const share = require('../../utils/share');
+
 const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 const { parseWordLines, parseQuestionLines } = require('../../utils/parser');
@@ -6,6 +8,9 @@ const { checkLibrary } = require('../../utils/content-security');
 const MAX_ITEMS = 2000;
 
 Page({
+    onShareAppMessage() {
+        return share.toFriend();
+    },
     data: {
         authState: 'checking',
         kind: 'question',

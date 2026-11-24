@@ -107,8 +107,17 @@
     color: #c0c6cf;
 }
 
+.share-btn {
+    margin-top: 32rpx;
+    height: 88rpx;
+    font-size: 30rpx;
+    color: #ffffff;
+    background: #3b6ef5;
+    border-radius: 44rpx;
+}
+
 .logout-btn {
-    margin-top: 48rpx;
+    margin-top: 20rpx;
     height: 88rpx;
     line-height: 88rpx;
     font-size: 30rpx;

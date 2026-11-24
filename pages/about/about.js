@@ -1,6 +1,11 @@
+const share = require('../../utils/share');
+
 const config = require('../../utils/config');
 
 Page({
+    onShareAppMessage() {
+        return share.toFriend();
+    },
     data: {
         version: config.VERSION,
         githubUrl: config.GITHUB_URL,

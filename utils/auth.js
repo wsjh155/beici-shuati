@@ -2,7 +2,15 @@
 // 未登录时页面仍应展示内容（游客模式），登录一律由用户主动点击触发。
 async function ensureSession(page) {
     page.setData({ authState: 'checking' });
-    const { data: session, error } = await getApp().ensureSession();
+    let result;
+    try {
+        result = await getApp().ensureSession();
+    } catch (e) {
+        // 朋友圈单页模式或网络异常时云端会话可能直接抛错，按游客态渲染，避免卡在「加载中」
+        result = { data: null, error: e };
+    }
+    const session = result && result.data;
+    const error = result && result.error;
     if (error || !session) {
         getApp().resetSession();
         page.setData({ authState: 'signed-out' });

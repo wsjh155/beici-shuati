@@ -1,9 +1,14 @@
+const share = require('../../utils/share');
+
 const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 const { parseWordLines, parseQuestionLines } = require('../../utils/parser');
 const { checkItems, checkMeta } = require('../../utils/content-security');
 
 Page({
+    onShareAppMessage() {
+        return share.toFriend();
+    },
     data: {
         authState: 'checking',
         tab: 'words',

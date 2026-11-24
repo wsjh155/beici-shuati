@@ -1,9 +1,14 @@
+const share = require('../../utils/share');
+
 const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 
 // 我的题库 / 词库管理：只看自己的，可单独练习、取消订阅（删除）。
 // 订阅统一在「预设题库 · 订阅」页（/pages/community/community）。
 Page({
+    onShareAppMessage() {
+        return share.toFriend();
+    },
     data: {
         authState: 'checking',
         loading: false,

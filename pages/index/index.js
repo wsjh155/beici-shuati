@@ -1,7 +1,15 @@
+const share = require('../../utils/share');
+
 const { ensureSession } = require('../../utils/auth');
 const store = require('../../utils/store');
 
 Page({
+    onShareAppMessage() {
+        return share.toFriend();
+    },
+    onShareTimeline() {
+        return share.toTimeline();
+    },
     data: {
         authState: 'checking',
         dueCount: 0,
@@ -23,6 +31,7 @@ Page({
     },
 
     onShow() {
+        share.enableTimelineMenu();
         this.restore();
     },
 

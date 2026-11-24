@@ -1,3 +1,5 @@
+const share = require('../../utils/share');
+
 const { ensureSession, requireLogin } = require('../../utils/auth');
 const store = require('../../utils/store');
 const config = require('../../utils/config');
@@ -7,6 +9,9 @@ const REPORT_CODES = ['illegal', 'porn', 'ads', 'copyright', 'other'];
 
 // 订阅中心：官方预设题库 / 官方词库 / 共享库，订阅都在这里完成。
 Page({
+    onShareAppMessage() {
+        return share.toFriend();
+    },
     data: {
         authState: 'checking',
         loading: false,
